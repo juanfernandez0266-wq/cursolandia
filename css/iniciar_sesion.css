@@ -1,0 +1,33 @@
+body {
+    margin: 0;
+}
+
+.login-formulario {
+    width: 100%;
+    max-width: 450px;
+    padding: 40px;
+}
+
+.login-formulario h1 {
+    margin-bottom: 10px;
+}
+
+.login-formulario p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.login-formulario .form-control {
+    min-height: 50px;
+}
+
+.login-formulario .btn {
+    min-height: 50px;
+}
+
+.imagen-login {
+    background-image: url("../imagenes/Chica_sosteniendo_libro.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
