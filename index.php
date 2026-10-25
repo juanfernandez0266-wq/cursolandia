@@ -1,48 +1,51 @@
 <?php
 
+session_start();
+
+require "clases/usuario.php";
+
 $errores = array();
 
-$nombre = "";
-$apellido = "";
-$usuario = "";
+$Nombre = "";
+$Apellido = "";
+$NombreUsuario = "";
 $email = "";
 
 if (isset($_POST["crear_cuenta"])) {
 
-    $nombre = trim($_POST["nombre"]);
-    $apellido = trim($_POST["apellido"]);
-    $usuario = trim($_POST["usuario"]);
-    $email = trim($_POST["email"]);
-    $password = $_POST["password"];
+    $Nombre = $_POST["Nombre"];
+    $Apellido = $_POST["Apellido"];
+    $NombreUsuario = $_POST["NombreUsuario"];
+    $email = $_POST["email"];
+    $Contraseña = $_POST["Contraseña"];
 
-    if ($nombre == "") {
-        $errores["nombre"] = "Debe ingresar su nombre.";
+
+    $resultado = Usuario::registrar(
+        $Nombre,
+        $Apellido,
+        $email,
+        $NombreUsuario,
+        $Contraseña
+    );
+
+
+    if (is_array($resultado)) {
+
+        $errores = $resultado;
+
     }
+    else {
 
-    if ($apellido == "") {
-        $errores["apellido"] = "Debe ingresar su apellido.";
-    }
+        $usuarioRegistrado = $resultado;
 
-    if ($usuario == "") {
-        $errores["usuario"] = "Debe ingresar un nombre de usuario.";
-    }
+        $_SESSION["idUsuario"] = $usuarioRegistrado->verId();
 
-    if ($email == "") {
-        $errores["email"] = "Debe ingresar un correo electrónico.";
-    }
-
-    if ($password == "") {
-        $errores["password"] = "Debe ingresar una contraseña.";
-    }
-
-    if (count($errores) == 0) {
-        $registroCorrecto = true;
+        header("Location: completar_registro.php");
+        exit;
     }
 }
 
 ?>
-
-
 
 
 <!DOCTYPE html>
@@ -56,7 +59,8 @@ if (isset($_POST["crear_cuenta"])) {
 
     <!-- Bootstrap CSS -->
     <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 
     <!-- CSS propio -->
     <link rel="stylesheet" href="css/estilos.css">
@@ -67,7 +71,9 @@ if (isset($_POST["crear_cuenta"])) {
 
     <!-- HEADER -->
     <header>
+
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+
             <div class="container">
 
                 <!-- Nombre / Logo -->
@@ -76,7 +82,8 @@ if (isset($_POST["crear_cuenta"])) {
                 </a>
 
                 <!-- Botón menú para pantallas pequeñas -->
-                <button class="navbar-toggler" type="button"
+                <button class="navbar-toggler"
+                    type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#menuPrincipal"
                     aria-controls="menuPrincipal"
@@ -84,6 +91,7 @@ if (isset($_POST["crear_cuenta"])) {
                     aria-label="Abrir menú">
 
                     <span class="navbar-toggler-icon"></span>
+
                 </button>
 
                 <!-- Opciones del menú -->
@@ -92,21 +100,27 @@ if (isset($_POST["crear_cuenta"])) {
                     <ul class="navbar-nav ms-auto align-items-lg-center">
 
                         <li class="nav-item">
+
                             <a class="nav-link" href="#">
                                 Ver cursos
                             </a>
+
                         </li>
 
                         <li class="nav-item ms-lg-3">
+
                             <a class="btn btn-outline-primary" href="#registro">
                                 Registrarse
                             </a>
+
                         </li>
 
                         <li class="nav-item ms-lg-2">
+
                             <a class="btn btn-primary" href="iniciar_sesion.php">
                                 Entrar
                             </a>
+
                         </li>
 
                     </ul>
@@ -114,7 +128,9 @@ if (isset($_POST["crear_cuenta"])) {
                 </div>
 
             </div>
+
         </nav>
+
     </header>
 
 
@@ -129,92 +145,197 @@ if (isset($_POST["crear_cuenta"])) {
 
                     <!-- Parte izquierda -->
                     <div class="col-lg-8">
+
                         <h1>Aprendé y compartí lo que sabés</h1>
 
                         <p>
-                            Cursolandia es un espacio para explorar cursos, anotarte, crear los tuyos y resolver dudas con otras personas.
+                            Cursolandia es un espacio para explorar cursos,
+                            anotarte, crear los tuyos y resolver dudas con otras personas.
                         </p>
+
                     </div>
 
 
                     <!-- Parte derecha - Formulario para registro del usuario nuevo -->
                     <div class="col-lg-4">
 
-                        <form id="registro" method="POST" action="index.php" class="bg-white text-dark p-4 rounded shadow">
+                        <form
+                            id="registro"
+                            method="POST"
+                            action="index.php"
+                            class="bg-white text-dark p-4 rounded shadow">
 
-                            <h2 class="text-center mb-4">Crear cuenta</h2>
+                            <h2 class="text-center mb-4">
+                                Crear cuenta
+                            </h2>
+
 
                             <!-- Nombre y apellido -->
                             <div class="row mb-3">
 
+                                <!-- Nombre -->
                                 <div class="col-md-6">
-                                    <label for="nombre" class="form-label">Nombre</label>
-                                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa tu nombre">
-                                    
+
+                                    <label for="Nombre" class="form-label">
+                                        Nombre
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="Nombre"
+                                        name="Nombre"
+                                        value="<?php echo htmlspecialchars($Nombre); ?>"
+                                        placeholder="Ingresa tu nombre">
+
                                     <!-- Validación del nombre -->
                                     <?php
-                                        if (isset($errores["nombre"])) {
-                                                echo '<p class="text-danger mt-1">'.$errores["nombre"].'</p>';
-                                        }
+
+                                    if (isset($errores["Nombre"])) {
+
+                                        echo '<p class="text-danger mt-1">'
+                                            . $errores["Nombre"] .
+                                            '</p>';
+                                    }
+
                                     ?>
 
                                 </div>
 
+
+                                <!-- Apellido -->
                                 <div class="col-md-6">
-                                    <label for="apellido" class="form-label">Apellido</label>
-                                    <input type="text" class="form-control" id="apellido" name="apellido" placeholder="Ingresa tu apellido">
-                                    
+
+                                    <label for="Apellido" class="form-label">
+                                        Apellido
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="Apellido"
+                                        name="Apellido"
+                                        value="<?php echo htmlspecialchars($Apellido); ?>"
+                                        placeholder="Ingresa tu apellido">
+
                                     <!-- Validación del apellido -->
                                     <?php
-                                        if (isset($errores["apellido"])) {
-                                            echo '<p class="text-danger mt-1">'.$errores["apellido"].'</p>';
-                                        }
+
+                                    if (isset($errores["Apellido"])) {
+
+                                        echo '<p class="text-danger mt-1">'
+                                            . $errores["Apellido"] .
+                                            '</p>';
+                                    }
+
                                     ?>
+
                                 </div>
 
                             </div>
+
 
                             <!-- Nombre de usuario -->
                             <div class="mb-3">
-                                <label for="usuario" class="form-label">Nombre de usuario</label>
-                                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingresa un nombre de usuario">
-                                
+
+                                <label for="NombreUsuario" class="form-label">
+                                    Nombre de usuario
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="NombreUsuario"
+                                    name="NombreUsuario"
+                                    value="<?php echo htmlspecialchars($NombreUsuario); ?>"
+                                    placeholder="Ingresa un nombre de usuario">
+
                                 <!-- Validación del Nombre de usuario -->
                                 <?php
-                                    if (isset($errores["usuario"])) {
-                                        echo '<p class="text-danger mt-1">'.$errores["usuario"].'</p>';
-                                    }
+
+                                if (isset($errores["NombreUsuario"])) {
+
+                                    echo '<p class="text-danger mt-1">'
+                                        . $errores["NombreUsuario"] .
+                                        '</p>';
+                                }
+
                                 ?>
+
                             </div>
+
 
                             <!-- Correo electrónico -->
                             <div class="mb-3">
-                                <label for="email" class="form-label">Correo electrónico</label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Ingresa tu correo electrónico">
-                                
+
+                                <label for="email" class="form-label">
+                                    Correo electrónico
+                                </label>
+
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    name="email"
+                                    value="<?php echo htmlspecialchars($email); ?>"
+                                    placeholder="Ingresa tu correo electrónico">
+
                                 <!-- Validación del correo electrónico -->
-                                 <?php
-                                    if (isset($errores["email"])) {
-                                        echo '<p class="text-danger mt-1">'.$errores["email"].'</p>';
-                                    }
+                                <?php
+
+                                if (isset($errores["email"])) {
+
+                                    echo '<p class="text-danger mt-1">'
+                                        . $errores["email"] .
+                                        '</p>';
+                                }
+
                                 ?>
+
                             </div>
+
 
                             <!-- Contraseña -->
                             <div class="mb-4">
-                                <label for="password" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Ingresa una contraseña">
+
+                                <label for="Contraseña" class="form-label">
+                                    Contraseña
+                                </label>
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="Contraseña"
+                                    name="Contraseña"
+                                    placeholder="Ingresa una contraseña">
+
                                 <!-- Validación de la contraseña -->
                                 <?php
-                                    if (isset($errores["password"])) {
-                                        echo '<p class="text-danger mt-1">'.$errores["password"].'</p>';
-                                    }
+
+                                if (isset($errores["Contraseña"])) {
+
+                                    echo '<p class="text-danger mt-1">'
+                                        . $errores["Contraseña"] .
+                                        '</p>';
+                                }
+
                                 ?>
+
                             </div>
+
 
                             <!-- Botón -->
                             <div class="d-grid">
-                                <button type="submit" name="crear_cuenta" class="btn btn-primary">Crear cuenta</button>
+
+                                <button
+                                    type="submit"
+                                    name="crear_cuenta"
+                                    class="btn btn-primary">
+
+                                    Crear cuenta
+
+                                </button>
+
                             </div>
 
                         </form>
@@ -230,25 +351,43 @@ if (isset($_POST["crear_cuenta"])) {
 
         <!-- SECCIÓN 2 -->
         <section class="bg-light py-5">
+
             <div class="container">
-                <h2>Sección 2 - Información</h2>
+
+                <h2>
+                    Sección 2 - Información
+                </h2>
+
             </div>
+
         </section>
 
 
         <!-- SECCIÓN 3 -->
         <section class="py-5">
+
             <div class="container">
-                <h2>Sección 3 - Información</h2>
+
+                <h2>
+                    Sección 3 - Información
+                </h2>
+
             </div>
+
         </section>
 
 
         <!-- SECCIÓN 4 -->
         <section class="bg-light py-5">
+
             <div class="container">
-                <h2>Sección 4 - Preguntas frecuentes</h2>
+
+                <h2>
+                    Sección 4 - Preguntas frecuentes
+                </h2>
+
             </div>
+
         </section>
 
     </main>
@@ -256,9 +395,15 @@ if (isset($_POST["crear_cuenta"])) {
 
     <!-- FOOTER -->
     <footer class="bg-dark text-white py-4">
+
         <div class="container">
-            <h2>Footer</h2>
+
+            <h2>
+                Footer
+            </h2>
+
         </div>
+
     </footer>
 
 
