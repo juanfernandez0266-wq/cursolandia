@@ -37,8 +37,20 @@ if (isset($_POST["iniciar_sesion"])) {
 
         $_SESSION["idUsuario"] = $usuarioLogueado->verId();
 
-        header("Location: inicio.php");
-        exit;
+        if (isset($_SESSION["volverDespuesLogin"])) {
+
+            $paginaDestino = $_SESSION["volverDespuesLogin"];
+
+            unset($_SESSION["volverDespuesLogin"]);
+
+            header("Location: " . $paginaDestino);
+            exit;
+        }
+        else {
+
+            header("Location: inicio.php");
+            exit;
+        }
     }
 }
 

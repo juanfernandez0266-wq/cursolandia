@@ -242,6 +242,27 @@ class Usuario {
             $usuario->FechaVencimiento = $datos["FechaVencimiento"];
             $usuario->Rol_Usuario = $datos["Rol_Usuario"];
 
+            //BUSCA LOS INTERESES QUE TIENE ASOCIADOS AL USUARIO
+            $usuario->Intereses = array();
+
+            $sqlIntereses = "SELECT interes.NombreInteres
+                            FROM usuariointeres
+                            INNER JOIN interes
+                            ON usuariointeres.idInteres = interes.idInteres
+                            WHERE usuariointeres.idUsuario = $idUsuario";
+
+            $resultadoIntereses = mysqli_query(
+                $conexion,
+                $sqlIntereses
+            );
+
+            // GUARDAR LOS INTERESES EN EL OBJETO USUARIO
+            while ($filaInteres = mysqli_fetch_assoc($resultadoIntereses)) {
+
+                $usuario->Intereses[] =
+                    $filaInteres["NombreInteres"];
+            }
+
             mysqli_close($conexion);
 
             return $usuario;
@@ -451,13 +472,381 @@ class Usuario {
     }
 
 
-    public function modoficarperfil() {
+    public function modificarperfil( 
+        $Nombre,
+        $Apellido,
+        $NombreUsuario,
+        $Antecedentes,
+        $FotoPerfil = null,
+        
+        ) {
 
+        $errores = array();
+
+        $Nombre = trim($Nombre);
+        $Apellido = trim($Apellido);
+        $NombreUsuario = trim($NombreUsuario);
+        $Antecedentes = trim($Antecedentes);
+
+
+        // VALIDACION DEL NOMBRE
+
+        if ($Nombre == "") {
+            $errores["Nombre"] = "Debe ingresar un nombre.";
+        }
+        elseif (strlen($Nombre) > 20) {
+            $errores["Nombre"] = "El nombre no puede superar los 20 caracteres.";
+        }
+        elseif (!preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/", $Nombre)) {
+            $errores["Nombre"] = "El nombre solo puede contener letras.";
+        }
+
+
+        // VALIDACION DEL APELLIDO
+
+        if ($Apellido == "") {
+            $errores["Apellido"] = "Debe ingresar un apellido.";
+        }
+        elseif (strlen($Apellido) > 20) {
+            $errores["Apellido"] = "El apellido no puede superar los 20 caracteres.";
+        }
+        elseif (!preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/", $Apellido)) {
+            $errores["Apellido"] = "El apellido solo puede contener letras.";
+        }
+
+
+        // VALIDACION DEL NOMBRE DE USUARIO
+
+        if ($NombreUsuario == "") {
+            $errores["NombreUsuario"] = "Debe ingresar un nombre de usuario.";
+        }
+        elseif (strlen($NombreUsuario) > 20) {
+            $errores["NombreUsuario"] = "El nombre de usuario no puede superar los 20 caracteres.";
+        }
+        elseif (!preg_match("/^[a-zA-Z0-9_]+$/", $NombreUsuario)) {
+            $errores["NombreUsuario"] = "El nombre de usuario solo puede contener letras, números y guión bajo.";
+        }
+
+
+        // VALIDACION DE ANTECEDENTES
+
+        if ($Antecedentes == "") {
+            $errores["Antecedentes"] = "Debe ingresar sus antecedentes.";
+        }
+
+
+        if (count($errores) > 0) {
+            return $errores;
+        }
+
+
+        // CONEXION
+
+        require __DIR__ . "/../bd/conexion.php";
+
+
+        // COMPROBAR QUE EL NOMBRE DE USUARIO NO LO TENGA OTRO USUARIO
+
+        $NombreUsuarioBD =
+            mysqli_real_escape_string($conexion, $NombreUsuario);
+
+        $sql = "SELECT idUsuario
+                FROM usuario
+                WHERE NombreUsuario = '$NombreUsuarioBD'
+                AND idUsuario != $this->idUsuario";
+
+        $resultado = mysqli_query($conexion, $sql);
+
+
+        if (mysqli_num_rows($resultado) > 0) {
+
+            $errores["NombreUsuario"] =
+                "El nombre de usuario ya se encuentra registrado.";
+
+            mysqli_close($conexion);
+
+            return $errores;
+        }
+
+
+        // MANTENER LA FOTO ACTUAL POR DEFECTO
+
+        $FotoPerfilBD = $this->FotoPerfil;
+
+
+        
+
+
+        // SUBIR UNA NUEVA FOTO
+
+        if (
+            isset($FotoPerfil) &&
+            isset($FotoPerfil["name"]) &&
+            $FotoPerfil["name"] != ""
+        ) {
+
+            if ($FotoPerfil["error"] != 0) {
+
+                $errores["FotoPerfil"] =
+                    "Ocurrió un error al subir la imagen.";
+            }
+            else {
+
+                $extension = strtolower(
+                    pathinfo(
+                        $FotoPerfil["name"],
+                        PATHINFO_EXTENSION
+                    )
+                );
+
+
+                if (
+                    $extension != "jpg" &&
+                    $extension != "jpeg" &&
+                    $extension != "png"
+                ) {
+
+                    $errores["FotoPerfil"] =
+                        "La imagen debe ser JPG, JPEG o PNG.";
+                }
+                else {
+
+                    $carpeta =
+                        __DIR__ . "/../uploads/perfiles/";
+
+
+                    if (!is_dir($carpeta)) {
+
+                        mkdir(
+                            $carpeta,
+                            0777,
+                            true
+                        );
+                    }
+
+
+                    $nombreFoto =
+                        $this->idUsuario .
+                        "_" .
+                        time() .
+                        "." .
+                        $extension;
+
+
+                    $rutaFoto =
+                        $carpeta . $nombreFoto;
+
+
+                    if (
+                        move_uploaded_file(
+                            $FotoPerfil["tmp_name"],
+                            $rutaFoto
+                        )
+                    ) {
+
+                        $FotoPerfilBD =
+                            "uploads/perfiles/" .
+                            $nombreFoto;
+                    }
+                    else {
+
+                        $errores["FotoPerfil"] =
+                            "No se pudo guardar la foto de perfil.";
+                    }
+                }
+            }
+        }
+
+
+        if (count($errores) > 0) {
+
+            mysqli_close($conexion);
+
+            return $errores;
+        }
+
+
+        // PREPARAR DATOS PARA MYSQL
+
+        $NombreBD =
+            mysqli_real_escape_string($conexion, $Nombre);
+
+        $ApellidoBD =
+            mysqli_real_escape_string($conexion, $Apellido);
+
+        $AntecedentesBD =
+            mysqli_real_escape_string($conexion, $Antecedentes);
+
+        $FotoPerfilBD =
+            mysqli_real_escape_string($conexion, $FotoPerfilBD);
+
+
+        // ACTUALIZAR USUARIO
+
+        $sql = "UPDATE usuario
+                SET Nombre = '$NombreBD',
+                    Apellido = '$ApellidoBD',
+                    NombreUsuario = '$NombreUsuarioBD',
+                    Antecedentes = '$AntecedentesBD',
+                    FotoPerfil = '$FotoPerfilBD'
+                WHERE idUsuario = $this->idUsuario";
+
+
+        $resultado =
+            mysqli_query($conexion, $sql);
+
+
+        if (!$resultado) {
+
+            $errores["bd"] =
+                "No se pudieron guardar los cambios.";
+
+            mysqli_close($conexion);
+
+            return $errores;
+        }
+
+
+        // ACTUALIZAR OBJETO
+
+        $this->Nombre = $Nombre;
+        $this->Apellido = $Apellido;
+        $this->NombreUsuario = $NombreUsuario;
+        $this->Antecedentes = $Antecedentes;
+        $this->FotoPerfil = $FotoPerfilBD;
+
+
+        mysqli_close($conexion);
+
+
+        return $this;
     }
 
 
-    public function cambiarContraseña($contraseñaNueva) {
+    public function cambiarContraseña(
+        $ContraseñaActual,
+        $NuevaContraseña,
+        $ConfirmarContraseña
+    ) {
 
+        $errores = array();
+
+
+        // VALIDACION DE LA CONTRASEÑA ACTUAL
+
+        if ($ContraseñaActual == "") {
+
+            $errores["ContraseñaActual"] =
+                "Debe ingresar su contraseña actual.";
+        }
+
+
+        // VALIDACION DE LA NUEVA CONTRASEÑA
+
+        if ($NuevaContraseña == "") {
+
+            $errores["NuevaContraseña"] =
+                "Debe ingresar una nueva contraseña.";
+        }
+        elseif (strlen($NuevaContraseña) < 8) {
+
+            $errores["NuevaContraseña"] =
+                "La contraseña debe tener al menos 8 caracteres.";
+        }
+        elseif (strlen($NuevaContraseña) > 20) {
+
+            $errores["NuevaContraseña"] =
+                "La contraseña no puede superar los 20 caracteres.";
+        }
+        elseif (!preg_match("/^[a-zA-Z0-9]+$/", $NuevaContraseña)) {
+
+            $errores["NuevaContraseña"] =
+                "La contraseña solo puede contener letras y números.";
+        }
+
+
+        // CONFIRMAR NUEVA CONTRASEÑA
+
+        if ($ConfirmarContraseña == "") {
+
+            $errores["ConfirmarContraseña"] =
+                "Debe confirmar la nueva contraseña.";
+        }
+        elseif ($NuevaContraseña != $ConfirmarContraseña) {
+
+            $errores["ConfirmarContraseña"] =
+                "Las contraseñas no coinciden.";
+        }
+
+
+        // SI HAY ERRORES
+
+        if (count($errores) > 0) {
+
+            return $errores;
+        }
+
+
+        // COMPROBAR CONTRASEÑA ACTUAL
+
+        if (!password_verify(
+            $ContraseñaActual,
+            $this->Contraseña
+        )) {
+
+            $errores["ContraseñaActual"] =
+                "La contraseña actual es incorrecta.";
+
+            return $errores;
+        }
+
+
+        // GENERAR NUEVO HASH
+
+        $NuevaContraseñaHash =
+            password_hash(
+                $NuevaContraseña,
+                PASSWORD_DEFAULT
+            );
+
+
+        // CONEXION
+
+        require __DIR__ . "/../bd/conexion.php";
+
+
+        // ACTUALIZAR CONTRASEÑA
+
+        $sql = "UPDATE usuario
+                SET Contraseña = '$NuevaContraseñaHash'
+                WHERE idUsuario = $this->idUsuario";
+
+
+        $resultado =
+            mysqli_query($conexion, $sql);
+
+
+        if (!$resultado) {
+
+            $errores["CambiarContraseña"] =
+                "No se pudo cambiar la contraseña.";
+
+            mysqli_close($conexion);
+
+            return $errores;
+        }
+
+
+        // ACTUALIZAR OBJETO
+
+        $this->Contraseña =
+            $NuevaContraseñaHash;
+
+
+        mysqli_close($conexion);
+
+
+        return $this;
     }
 
 
@@ -553,6 +942,11 @@ class Usuario {
 
 
         return Usuario::buscarPorId($idUsuario);
+    }
+
+
+    public function __get($atributo) {
+        return $this->$atributo;
     }
 
 
