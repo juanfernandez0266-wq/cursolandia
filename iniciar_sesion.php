@@ -4,9 +4,16 @@ session_start();
 
 require "clases/usuario.php";
 
-$errores = array();
 
+
+// DATOS DEL FORMULARIO
+
+$errores = array();
 $email = "";
+
+
+
+// INICIAR SESION
 
 if (isset($_POST["iniciar_sesion"])) {
 
@@ -29,13 +36,18 @@ if (isset($_POST["iniciar_sesion"])) {
         $errores = $resultado;
 
     }
-    else {
 
-        // CREDENCIALES CORRECTAS
+
+    // CREDENCIALES CORRECTAS
+
+    else {
 
         $usuarioLogueado = $resultado;
 
         $_SESSION["idUsuario"] = $usuarioLogueado->verId();
+
+
+        // VOLVER A LA PAGINA QUE SOLICITO INICIAR SESION
 
         if (isset($_SESSION["volverDespuesLogin"])) {
 
@@ -46,6 +58,10 @@ if (isset($_POST["iniciar_sesion"])) {
             header("Location: " . $paginaDestino);
             exit;
         }
+
+
+        // IR A INICIO
+
         else {
 
             header("Location: inicio.php");
@@ -57,33 +73,26 @@ if (isset($_POST["iniciar_sesion"])) {
 ?>
 
 
-
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>
-        Iniciar sesión - Cursolandia
-    </title>
+    <title>Iniciar sesión - Cursolandia</title>
 
 
     <!-- Bootstrap CSS -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 
-    <!-- CSS propio -->
-    <link
-        rel="stylesheet"
-        href="css/iniciar_sesion.css">
+    <!-- CSS PROPIO -->
+
+    <link rel="stylesheet" href="css/iniciar_sesion.css">
 
 </head>
 
@@ -96,7 +105,9 @@ if (isset($_POST["iniciar_sesion"])) {
 
         <div class="container-fluid">
 
+
             <div class="row min-vh-100">
+
 
 
                 <!-- PARTE IZQUIERDA -->
@@ -107,125 +118,81 @@ if (isset($_POST["iniciar_sesion"])) {
                     <div class="login-formulario">
 
 
-                        <h1>
-                            Iniciar sesión
-                        </h1>
+                        <h1>Iniciar sesión</h1>
+
+                        <p>Ingresá a tu cuenta de Cursolandia</p>
 
 
-                        <p>
-                            Ingresá a tu cuenta de Cursolandia
-                        </p>
+                        <form id="inicioSesion" method="POST" action="iniciar_sesion.php">
 
 
-                        <form
-                            id="inicioSesion"
-                            method="POST"
-                            action="iniciar_sesion.php">
 
-
-                            <!-- Correo electrónico -->
+                            <!-- CORREO ELECTRONICO -->
 
                             <div class="mb-3">
 
-                                <label
-                                    for="email"
-                                    class="form-label">
 
-                                    Correo electrónico
+                                <label for="email" class="form-label">Correo electrónico</label>
 
-                                </label>
+                                <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" placeholder="Ingresá tu correo electrónico">
 
 
-                                <input
-                                    type="email"
-                                    class="form-control"
-                                    id="email"
-                                    name="email"
-                                    value="<?php echo htmlspecialchars($email); ?>"
-                                    placeholder="Ingresá tu correo electrónico">
-
-
-                                <!-- Validación del correo electrónico -->
+                                <!-- VALIDACION DEL CORREO ELECTRONICO -->
 
                                 <?php
 
                                 if (isset($errores["email"])) {
-
-                                    echo '<p class="text-danger mt-1">'
-                                        . $errores["email"] .
-                                        '</p>';
+                                    echo '<p class="text-danger mt-1">' . $errores["email"] . '</p>';
                                 }
 
                                 ?>
+
 
                             </div>
 
 
 
-                            <!-- Contraseña -->
+                            <!-- CONTRASEÑA -->
 
                             <div class="mb-4">
 
-                                <label
-                                    for="Contraseña"
-                                    class="form-label">
 
-                                    Contraseña
+                                <label for="Contraseña" class="form-label">Contraseña</label>
 
-                                </label>
+                                <input type="password" class="form-control" id="Contraseña" name="Contraseña" placeholder="Ingresá tu contraseña">
 
 
-                                <input
-                                    type="password"
-                                    class="form-control"
-                                    id="Contraseña"
-                                    name="Contraseña"
-                                    placeholder="Ingresá tu contraseña">
-
-
-                                <!-- Validación de la contraseña -->
+                                <!-- VALIDACION DE LA CONTRASEÑA -->
 
                                 <?php
 
                                 if (isset($errores["Contraseña"])) {
-
-                                    echo '<p class="text-danger mt-1">'
-                                        . $errores["Contraseña"] .
-                                        '</p>';
+                                    echo '<p class="text-danger mt-1">' . $errores["Contraseña"] . '</p>';
                                 }
 
                                 ?>
 
 
-                                <!-- Credenciales incorrectas -->
+                                <!-- CREDENCIALES INCORRECTAS -->
 
                                 <?php
 
                                 if (isset($errores["credenciales"])) {
-
-                                    echo '<p class="text-danger mt-2">'
-                                        . $errores["credenciales"] .
-                                        '</p>';
+                                    echo '<p class="text-danger mt-2">' . $errores["credenciales"] . '</p>';
                                 }
 
                                 ?>
+
 
                             </div>
 
 
 
-                            <!-- Botón -->
+                            <!-- BOTON -->
 
                             <div class="d-grid">
 
-                                <button
-                                    type="submit"
-                                    name="iniciar_sesion"
-                                    class="btn btn-dark">
-
-                                    Entrar
-
-                                </button>
+                                <button type="submit" name="iniciar_sesion" class="btn btn-dark">Entrar</button>
 
                             </div>
 
@@ -242,11 +209,11 @@ if (isset($_POST["iniciar_sesion"])) {
 
                 <!-- PARTE DERECHA -->
 
-                <div class="col-lg-6 imagen-login">
-                </div>
+                <div class="col-lg-6 imagen-login"></div>
 
 
             </div>
+
 
         </div>
 
@@ -257,9 +224,7 @@ if (isset($_POST["iniciar_sesion"])) {
 
     <!-- Bootstrap JS -->
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
 </body>

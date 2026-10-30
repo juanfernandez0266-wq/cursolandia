@@ -1,3 +1,11 @@
+<?php
+
+session_start();
+
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -15,51 +23,30 @@
 
     <!-- CSS propio -->
     <link rel="stylesheet" href="css/inicio.css?v=2">
+
+    <!-- CSS MENU LATERAL -->
+     <link rel="stylesheet" href="css/menu_lateral.css?v=2">
+
+     <!-- CSS NOTIFICACIONES RAPIDAS -->
+    <link rel="stylesheet" href="css/notificaciones_rapidas.css">
+
+    
+
 </head>
 
 <body>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+     <!-- MENU LATERAL -->
 
-    <div class="sidebar-logo">
-        <h2>Cursolandia</h2>
-    </div>
+    <?php include "componentes/menu_lateral.php"; ?>
 
-    <nav class="sidebar-menu">
+    <!-- NOTIFICACIONES RAPIDAS -->
 
-        <a href="inicio.php" class="sidebar-link active">
-            <i class="bi bi-house"></i>
-            <span>Inicio</span>
-        </a>
-
-        <a href="perfil.php" class="sidebar-link">
-            <i class="bi bi-person"></i>
-            <span>Perfil</span>
-        </a>
-
-        <a href="mis_cursos.php" class="sidebar-link">
-            <i class="bi bi-journal-bookmark"></i>
-            <span>Mis Cursos</span>
-        </a>
-
-        <a href="notificaciones.php" class="sidebar-link">
-            <i class="bi bi-bell"></i>
-            <span>Notificaciones</span>
-        </a>
-
-        <a href="solicitudes_plan.php" class="sidebar-link">
-            <i class="bi bi-star"></i>
-            <span>Solicitudes Plan Pro</span>
-        </a>
-
-    </nav>
-
-</aside>
+    <?php include "componentes/notificaciones_rapidas.php"; ?>
 
 
     <!-- CONTENIDO PRINCIPAL -->
-    <div class="pagina-principal">
+    <div class="pagina-principal contenido-con-menu">
 
         <!-- TOPBAR -->
         <header class="topbar">
@@ -287,6 +274,13 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JS MENU LATERAL -->
+
+    <script src="js/menu_lateral.js"></script>
+
+    <!-- JS NOTIFICACIONES RAPIDAS -->
+    <script src="js/notificaciones_rapidas.js"></script>
 
 </body>
 

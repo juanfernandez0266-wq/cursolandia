@@ -1,0 +1,184 @@
+/* MENU LATERAL */
+
+.menu-lateral {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 88px;
+    height: 100vh;
+
+    background-color: white;
+
+    border-right: 1px solid #e3e7ed;
+
+    z-index: 1000;
+
+    overflow: hidden;
+
+    transition: width 0.25s ease;
+}
+
+
+/* MENU DESPLEGADO */
+
+.menu-lateral.menu-abierto {
+    width: 280px;
+}
+
+
+/* PARTE SUPERIOR */
+
+.menu-superior {
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+
+    padding-left: 16px;
+
+    border-bottom: 1px solid #e3e7ed;
+}
+
+
+/* BOTON MENU */
+
+.boton-menu {
+    width: 52px;
+    height: 48px;
+
+    border: none;
+    border-radius: 6px;
+
+    background-color: #eef1f5;
+
+    font-size: 24px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* OPCIONES */
+
+.menu-opciones {
+    padding: 8px;
+}
+
+
+/* OPCION DEL MENU */
+
+.menu-opcion {
+    width: 100%;
+    height: 56px;
+
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 8px;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    color: #1f2937;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+/* ICONO */
+
+.menu-icono {
+    width: 28px;
+    height: 28px;
+
+    min-width: 28px;
+
+    margin-left: 18px;
+
+    object-fit: contain;
+}
+
+
+/* TEXTO */
+
+.menu-texto {
+    margin-left: 20px;
+
+    font-size: 16px;
+
+    white-space: nowrap;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition: opacity 0.15s ease;
+}
+
+
+/* MOSTRAR TEXTO */
+
+.menu-lateral.menu-abierto .menu-texto {
+    opacity: 1;
+
+    visibility: visible;
+}
+
+
+/* OPCION ACTIVA */
+
+.menu-opcion-activa {
+    background-color: #e9efff;
+}
+
+
+/* PASAR EL MOUSE */
+
+.menu-opcion:hover {
+    background-color: #f1f4f8;
+}
+
+
+.menu-opcion-activa:hover {
+    background-color: #e9efff;
+}
+
+
+/* CONTENIDO DE LA PAGINA */
+
+.contenido-con-menu {
+    margin-left: 88px;
+
+    transition: margin-left 0.25s ease;
+}
+
+
+/* CONTENIDO CUANDO EL MENU ESTA ABIERTO */
+
+body.menu-abierto .contenido-con-menu {
+    margin-left: 280px;
+}
+
+
+/* ICONO MIS CURSOS */
+
+.menu-icono.icono-mis-cursos {
+    width: 40px !important;
+    height: 40px !important;
+
+    min-width: 40px;
+    min-height: 40px;
+
+    max-width: 40px;
+    max-height: 40px;
+
+    margin-left: 12px;
+}

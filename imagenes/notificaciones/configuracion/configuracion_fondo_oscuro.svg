@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+<title>Configuración</title>
+<circle cx="24" cy="24" r="24" fill="none"/>
+<path d="M21.5 12.5h5l.8 3.2a9.4 9.4 0 0 1 2.2.9l2.8-1.7 3.5 3.5-1.7 2.8c.4.7.7 1.4.9 2.2l3.2.8v5l-3.2.8a9.4 9.4 0 0 1-.9 2.2l1.7 2.8-3.5 3.5-2.8-1.7a9.4 9.4 0 0 1-2.2.9l-.8 3.2h-5l-.8-3.2a9.4 9.4 0 0 1-2.2-.9l-2.8 1.7-3.5-3.5 1.7-2.8a9.4 9.4 0 0 1-.9-2.2l-3.2-.8v-5l3.2-.8a9.4 9.4 0 0 1 .9-2.2l-1.7-2.8 3.5-3.5 2.8 1.7a9.4 9.4 0 0 1 2.2-.9z" transform="translate(0 -3)" fill="none" stroke="#ffffff" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="24" cy="24" r="4" fill="none" stroke="#ffffff" stroke-width="2"/>
+</svg>

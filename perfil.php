@@ -20,10 +20,7 @@ if (!isset($_SESSION["idUsuario"])) {
 
 // BUSCAR AL USUARIO LOGUEADO
 
-$usuarioActual = Usuario::buscarPorId(
-    $_SESSION["idUsuario"]
-);
-
+$usuarioActual = Usuario::buscarPorId($_SESSION["idUsuario"]);
 
 if ($usuarioActual == null) {
 
@@ -39,30 +36,18 @@ if ($usuarioActual == null) {
 // DATOS DEL USUARIO
 
 $errores = array();
-
 $guardadoCorrecto = false;
 
-
 $idUsuario = $usuarioActual->idUsuario;
-
 $Nombre = $usuarioActual->Nombre;
-
 $Apellido = $usuarioActual->Apellido;
-
 $NombreUsuario = $usuarioActual->NombreUsuario;
-
 $email = $usuarioActual->email;
-
 $FechaNacimiento = $usuarioActual->FechaNacimiento;
-
 $Intereses = $usuarioActual->Intereses;
-
 $Antecedentes = $usuarioActual->Antecedentes;
-
 $FotoPerfil = $usuarioActual->FotoPerfil;
-
 $PlanTipo = $usuarioActual->PlanTipo;
-
 $FechaVencimiento = $usuarioActual->FechaVencimiento;
 
 
@@ -72,11 +57,8 @@ $FechaVencimiento = $usuarioActual->FechaVencimiento;
 if (isset($_POST["guardar_cambios"])) {
 
     $Nombre = $_POST["Nombre"];
-
     $Apellido = $_POST["Apellido"];
-
     $NombreUsuario = $_POST["NombreUsuario"];
-
     $Antecedentes = $_POST["Antecedentes"];
 
 
@@ -85,22 +67,19 @@ if (isset($_POST["guardar_cambios"])) {
     $FotoPerfilNueva = null;
 
     if (isset($_FILES["FotoPerfil"])) {
-
-        $FotoPerfilNueva =
-            $_FILES["FotoPerfil"];
+        $FotoPerfilNueva = $_FILES["FotoPerfil"];
     }
 
 
     // MODIFICAR PERFIL
 
-    $resultado =
-        $usuarioActual->modificarperfil(
-            $Nombre,
-            $Apellido,
-            $NombreUsuario,
-            $Antecedentes,
-            $FotoPerfilNueva
-        );
+    $resultado = $usuarioActual->modificarperfil(
+        $Nombre,
+        $Apellido,
+        $NombreUsuario,
+        $Antecedentes,
+        $FotoPerfilNueva
+    );
 
 
     // SI HAY ERRORES
@@ -118,22 +97,11 @@ if (isset($_POST["guardar_cambios"])) {
 
         $usuarioActual = $resultado;
 
-
-        $Nombre =
-            $usuarioActual->Nombre;
-
-        $Apellido =
-            $usuarioActual->Apellido;
-
-        $NombreUsuario =
-            $usuarioActual->NombreUsuario;
-
-        $Antecedentes =
-            $usuarioActual->Antecedentes;
-
-        $FotoPerfil =
-            $usuarioActual->FotoPerfil;
-
+        $Nombre = $usuarioActual->Nombre;
+        $Apellido = $usuarioActual->Apellido;
+        $NombreUsuario = $usuarioActual->NombreUsuario;
+        $Antecedentes = $usuarioActual->Antecedentes;
+        $FotoPerfil = $usuarioActual->FotoPerfil;
 
         $guardadoCorrecto = true;
     }
@@ -145,22 +113,15 @@ if (isset($_POST["guardar_cambios"])) {
 
 if (isset($_POST["cambiar_contraseña"])) {
 
-    $ContraseñaActual =
-        $_POST["ContraseñaActual"];
+    $ContraseñaActual = $_POST["ContraseñaActual"];
+    $NuevaContraseña = $_POST["NuevaContraseña"];
+    $ConfirmarContraseña = $_POST["ConfirmarContraseña"];
 
-    $NuevaContraseña =
-        $_POST["NuevaContraseña"];
-
-    $ConfirmarContraseña =
-        $_POST["ConfirmarContraseña"];
-
-
-    $resultadoContraseña =
-        $usuarioActual->cambiarContraseña(
-            $ContraseñaActual,
-            $NuevaContraseña,
-            $ConfirmarContraseña
-        );
+    $resultadoContraseña = $usuarioActual->cambiarContraseña(
+        $ContraseñaActual,
+        $NuevaContraseña,
+        $ConfirmarContraseña
+    );
 
 
     // SI HAY ERRORES
@@ -179,10 +140,7 @@ if (isset($_POST["cambiar_contraseña"])) {
         session_unset();
         session_destroy();
 
-        header(
-            "Location: iniciar_sesion.php?contraseña_cambiada=1"
-        );
-
+        header("Location: iniciar_sesion.php?contraseña_cambiada=1");
         exit;
     }
 }
@@ -202,8 +160,7 @@ if (
     !file_exists(__DIR__ . "/" . $rutaFotoMostrar)
 ) {
 
-    $rutaFotoMostrar =
-        "imagenes/perfil_predeterminado.png";
+    $rutaFotoMostrar = "imagenes/perfil_predeterminado.png";
 }
 
 ?>
@@ -213,33 +170,30 @@ if (
 
 <html lang="es">
 
-
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-
-    <title>
-        Mi Perfil - Cursolandia
-    </title>
+    <title>Mi Perfil - Cursolandia</title>
 
 
     <!-- Bootstrap CSS -->
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 
-    <!-- CSS propio -->
+    <!-- CSS PROPIO -->
 
-    <link
-        rel="stylesheet"
-        href="css/perfil.css">
+    <link rel="stylesheet" href="css/perfil.css">
+
+
+    <!-- CSS MENU LATERAL -->
+
+    <link rel="stylesheet" href="css/menu_lateral.css?v=2">
+
+    <!-- CSS NOTIFICACIONES RAPIDAS -->
+    <link rel="stylesheet" href="css/notificaciones_rapidas.css">
 
 </head>
 
@@ -247,16 +201,25 @@ if (
 <body>
 
 
-    <main class="perfil">
+    <!-- MENU LATERAL -->
+
+    <?php include "componentes/menu_lateral.php"; ?>
+
+    <!-- NOTIFICACIONES RAPIDAS -->
+
+    <?php include "componentes/notificaciones_rapidas.php"; ?>
+
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+
+    <main class="perfil contenido-con-menu">
 
 
         <div class="container py-5">
 
 
-            <form
-                method="POST"
-                action="perfil.php"
-                enctype="multipart/form-data">
+            <form method="POST" action="perfil.php" enctype="multipart/form-data">
 
 
 
@@ -268,18 +231,9 @@ if (
                     <div class="seccion-contenido">
 
 
-                        <h1 class="titulo-seccion">
+                        <h1 class="titulo-seccion">Información personal</h1>
 
-                            Información personal
-
-                        </h1>
-
-
-                        <p class="descripcion-seccion">
-
-                            Detalles sobre el perfil e información de la cuenta.
-
-                        </p>
+                        <p class="descripcion-seccion">Detalles sobre el perfil e información de la cuenta.</p>
 
 
 
@@ -296,42 +250,19 @@ if (
 
                                 <div class="perfil-foto">
 
-
                                     <div class="foto-edicion">
 
-
-                                        <img
-                                            src="<?php echo htmlspecialchars($rutaFotoMostrar); ?>"
-                                            class="foto-perfil-imagen"
-                                            id="vistaFotoPerfil"
-                                            alt="Foto de perfil"
-                                            onerror="this.src='imagenes/perfil_predeterminado.png';">
-
+                                        <img src="<?php echo htmlspecialchars($rutaFotoMostrar); ?>" class="foto-perfil-imagen" id="vistaFotoPerfil" alt="Foto de perfil" onerror="this.src='imagenes/perfil_predeterminado.png';">
 
                                         <!-- LAPIZ PARA CAMBIAR FOTO -->
 
-                                        <label
-                                            for="FotoPerfil"
-                                            class="foto-editar"
-                                            title="Cambiar foto de perfil">
-
-                                            ✎
-
-                                        </label>
-
+                                        <label for="FotoPerfil" class="foto-editar" title="Cambiar foto de perfil"> ✎ </label>
 
                                         <!-- ARCHIVO OCULTO -->
 
-                                        <input
-                                            type="file"
-                                            id="FotoPerfil"
-                                            name="FotoPerfil"
-                                            class="foto-input"
-                                            accept=".jpg,.jpeg,.png">
-
+                                        <input type="file" id="FotoPerfil" name="FotoPerfil" class="foto-input" accept=".jpg,.jpeg,.png">
 
                                     </div>
-
 
                                 </div>
 
@@ -341,32 +272,9 @@ if (
 
                                 <div class="usuario-id">
 
+                                    <span>ID usuario: <strong id="idUsuario"><?php echo $idUsuario; ?></strong></span>
 
-                                    <span>
-
-                                        ID usuario:
-
-                                        <strong id="idUsuario">
-
-                                            <?php
-                                                echo $idUsuario;
-                                            ?>
-
-                                        </strong>
-
-                                    </span>
-
-
-                                    <button
-                                        type="button"
-                                        class="btn-copiar"
-                                        onclick="copiarId()"
-                                        title="Copiar ID">
-
-                                        ⧉
-
-                                    </button>
-
+                                    <button type="button" class="btn-copiar" onclick="copiarId()" title="Copiar ID"> ⧉ </button>
 
                                 </div>
 
@@ -377,10 +285,7 @@ if (
                                 <?php
 
                                 if (isset($errores["FotoPerfil"])) {
-
-                                    echo '<p class="text-danger mt-2">'
-                                        . $errores["FotoPerfil"]
-                                        . '</p>';
+                                    echo '<p class="text-danger mt-2">' . $errores["FotoPerfil"] . '</p>';
                                 }
 
                                 ?>
@@ -404,53 +309,26 @@ if (
                                     <div class="col-md-6">
 
 
-                                        <label class="form-label">
-
-                                            Nombre completo
-
-                                            <span class="obligatorio">
-                                                *
-                                            </span>
-
-                                        </label>
-
+                                        <label class="form-label">Nombre completo <span class="obligatorio">*</span></label>
 
 
                                         <div class="row g-2">
-
 
 
                                             <!-- NOMBRE -->
 
                                             <div class="col-md-6">
 
-
-                                                <input
-                                                    type="text"
-                                                    class="form-control"
-                                                    id="Nombre"
-                                                    name="Nombre"
-                                                    value="<?php echo htmlspecialchars($Nombre); ?>"
-                                                    placeholder="Nombre">
-
+                                                <input type="text" class="form-control" id="Nombre" name="Nombre" value="<?php echo htmlspecialchars($Nombre); ?>" placeholder="Nombre">
 
                                             </div>
-
 
 
                                             <!-- APELLIDO -->
 
                                             <div class="col-md-6">
 
-
-                                                <input
-                                                    type="text"
-                                                    class="form-control"
-                                                    id="Apellido"
-                                                    name="Apellido"
-                                                    value="<?php echo htmlspecialchars($Apellido); ?>"
-                                                    placeholder="Apellido">
-
+                                                <input type="text" class="form-control" id="Apellido" name="Apellido" value="<?php echo htmlspecialchars($Apellido); ?>" placeholder="Apellido">
 
                                             </div>
 
@@ -464,10 +342,7 @@ if (
                                         <?php
 
                                         if (isset($errores["Nombre"])) {
-
-                                            echo '<p class="text-danger mt-1">'
-                                                . $errores["Nombre"]
-                                                . '</p>';
+                                            echo '<p class="text-danger mt-1">' . $errores["Nombre"] . '</p>';
                                         }
 
                                         ?>
@@ -479,10 +354,7 @@ if (
                                         <?php
 
                                         if (isset($errores["Apellido"])) {
-
-                                            echo '<p class="text-danger mt-1">'
-                                                . $errores["Apellido"]
-                                                . '</p>';
+                                            echo '<p class="text-danger mt-1">' . $errores["Apellido"] . '</p>';
                                         }
 
                                         ?>
@@ -497,36 +369,14 @@ if (
                                     <div class="col-md-6">
 
 
-                                        <label
-                                            for="NombreUsuario"
-                                            class="form-label">
-
-                                            Nombre de usuario
-
-                                            <span class="obligatorio">
-                                                *
-                                            </span>
-
-                                        </label>
+                                        <label for="NombreUsuario" class="form-label">Nombre de usuario <span class="obligatorio">*</span></label>
 
 
                                         <div class="campo-editable">
 
+                                            <input type="text" class="form-control" id="NombreUsuario" name="NombreUsuario" value="<?php echo htmlspecialchars($NombreUsuario); ?>">
 
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                id="NombreUsuario"
-                                                name="NombreUsuario"
-                                                value="<?php echo htmlspecialchars($NombreUsuario); ?>">
-
-
-                                            <span class="icono-editar">
-
-                                                ✎
-
-                                            </span>
-
+                                            <span class="icono-editar">✎</span>
 
                                         </div>
 
@@ -537,10 +387,7 @@ if (
                                         <?php
 
                                         if (isset($errores["NombreUsuario"])) {
-
-                                            echo '<p class="text-danger mt-1">'
-                                                . $errores["NombreUsuario"]
-                                                . '</p>';
+                                            echo '<p class="text-danger mt-1">' . $errores["NombreUsuario"] . '</p>';
                                         }
 
                                         ?>
@@ -554,23 +401,9 @@ if (
 
                                     <div class="col-md-6">
 
+                                        <label for="email" class="form-label">Email completo</label>
 
-                                        <label
-                                            for="email"
-                                            class="form-label">
-
-                                            Email completo
-
-                                        </label>
-
-
-                                        <input
-                                            type="email"
-                                            class="form-control campo-bloqueado"
-                                            id="email"
-                                            value="<?php echo htmlspecialchars($email); ?>"
-                                            disabled>
-
+                                        <input type="email" class="form-control campo-bloqueado" id="email" value="<?php echo htmlspecialchars($email); ?>" disabled>
 
                                     </div>
 
@@ -580,36 +413,14 @@ if (
 
                                     <div class="col-md-6">
 
+                                        <label for="FechaNacimiento" class="form-label">Fecha de nacimiento</label>
 
-                                        <label
-                                            for="FechaNacimiento"
-                                            class="form-label">
-
-                                            Fecha de nacimiento
-
-                                        </label>
-
-
-                                        <input
-                                            type="text"
-                                            class="form-control campo-bloqueado"
-                                            id="FechaNacimiento"
-                                            value="<?php
-
-                                                if (
-                                                    $FechaNacimiento != null &&
-                                                    $FechaNacimiento != ""
-                                                ) {
-
-                                                    echo date(
-                                                        "d/m/Y",
-                                                        strtotime($FechaNacimiento)
-                                                    );
-                                                }
-
-                                            ?>"
-                                            disabled>
-
+                                        <input type="text" class="form-control campo-bloqueado" id="FechaNacimiento"
+                                        value="<?php
+                                            if ($FechaNacimiento != null && $FechaNacimiento != "") {
+                                                echo date("d/m/Y", strtotime($FechaNacimiento));
+                                            }
+                                        ?>" disabled>
 
                                     </div>
 
@@ -629,27 +440,18 @@ if (
                         <div class="mt-4">
 
 
-                            <label class="form-label">
-
-                                Intereses
-
-                            </label>
+                            <label class="form-label">Intereses</label>
 
 
                             <div class="intereses-contenedor">
 
-
                                 <?php
 
                                 foreach ($Intereses as $Interes) {
-
-                                    echo '<span class="interes-etiqueta">'
-                                        . htmlspecialchars($Interes)
-                                        . '</span>';
+                                    echo '<span class="interes-etiqueta">' . htmlspecialchars($Interes) . '</span>';
                                 }
 
                                 ?>
-
 
                             </div>
 
@@ -663,20 +465,9 @@ if (
                         <div class="mt-4">
 
 
-                            <label
-                                for="Antecedentes"
-                                class="form-label">
+                            <label for="Antecedentes" class="form-label">Antecedentes</label>
 
-                                Antecedentes
-
-                            </label>
-
-
-                            <textarea
-                                class="form-control antecedentes"
-                                id="Antecedentes"
-                                name="Antecedentes"
-                                rows="3"><?php echo htmlspecialchars($Antecedentes); ?></textarea>
+                            <textarea class="form-control antecedentes" id="Antecedentes" name="Antecedentes" rows="3"><?php echo htmlspecialchars($Antecedentes); ?></textarea>
 
 
 
@@ -685,10 +476,7 @@ if (
                             <?php
 
                             if (isset($errores["Antecedentes"])) {
-
-                                echo '<p class="text-danger mt-1">'
-                                    . $errores["Antecedentes"]
-                                    . '</p>';
+                                echo '<p class="text-danger mt-1">' . $errores["Antecedentes"] . '</p>';
                             }
 
                             ?>
@@ -712,56 +500,26 @@ if (
                     <div class="seccion-contenido">
 
 
-                        <h2 class="titulo-seccion">
+                        <h2 class="titulo-seccion">Privacidad y seguridad</h2>
 
-                            Privacidad y seguridad
-
-                        </h2>
-
-
-                        <p class="descripcion-seccion">
-
-                            Gestioná la contraseña y la seguridad de tu cuenta.
-
-                        </p>
+                        <p class="descripcion-seccion">Gestioná la contraseña y la seguridad de tu cuenta.</p>
 
 
 
                         <div class="seguridad-contenedor mt-4">
 
 
-                            <h3>
-
-                                Cambiar contraseña
-
-                            </h3>
-
+                            <h3>Cambiar contraseña</h3>
 
 
                             <div class="aviso-seguridad">
 
-
-                                <span class="aviso-icono">
-
-                                    ⓘ
-
-                                </span>
-
+                                <span class="aviso-icono">ⓘ</span>
 
                                 <span>
-
-                                    Para garantizar tu seguridad, cerraremos tu sesión
-                                    cuando cambies tu contraseña.
-
-                                    <strong>
-
-                                        Utilizá la nueva contraseña para iniciar sesión
-                                        de nuevo.
-
-                                    </strong>
-
+                                    Para garantizar tu seguridad, cerraremos tu sesión cuando cambies tu contraseña.
+                                    <strong>Utilizá la nueva contraseña para iniciar sesión de nuevo.</strong>
                                 </span>
-
 
                             </div>
 
@@ -772,44 +530,19 @@ if (
                             <div class="mt-4 campo-password">
 
 
-                                <label
-                                    for="ContraseñaActual"
-                                    class="form-label">
-
-                                    Contraseña actual
-
-                                </label>
+                                <label for="ContraseñaActual" class="form-label">Contraseña actual</label>
 
 
                                 <div class="password-contenedor">
 
+                                    <input type="password" class="form-control" id="ContraseñaActual" name="ContraseñaActual" placeholder="Escribe tu contraseña actual">
 
-                                    <input
-                                        type="password"
-                                        class="form-control"
-                                        id="ContraseñaActual"
-                                        name="ContraseñaActual"
-                                        placeholder="Escribe tu contraseña actual">
-
-
-                                    <button
-                                        type="button"
-                                        class="mostrar-password"
-                                        onclick="mostrarContraseña('ContraseñaActual')">
-
-                                        ◉
-
-                                    </button>
-
+                                    <button type="button" class="mostrar-password" onclick="mostrarContraseña('ContraseñaActual')"> ◉ </button>
 
                                 </div>
 
 
-                                <small>
-
-                                    Escribe la contraseña que usas actualmente.
-
-                                </small>
+                                <small>Escribe la contraseña que usas actualmente.</small>
 
 
 
@@ -818,10 +551,7 @@ if (
                                 <?php
 
                                 if (isset($errores["ContraseñaActual"])) {
-
-                                    echo '<p class="text-danger mt-1">'
-                                        . $errores["ContraseñaActual"]
-                                        . '</p>';
+                                    echo '<p class="text-danger mt-1">' . $errores["ContraseñaActual"] . '</p>';
                                 }
 
                                 ?>
@@ -840,44 +570,19 @@ if (
                                 <div class="col-md-6 campo-password">
 
 
-                                    <label
-                                        for="NuevaContraseña"
-                                        class="form-label">
-
-                                        Nueva contraseña
-
-                                    </label>
+                                    <label for="NuevaContraseña" class="form-label">Nueva contraseña</label>
 
 
                                     <div class="password-contenedor">
 
+                                        <input type="password" class="form-control" id="NuevaContraseña" name="NuevaContraseña" placeholder="Introduce la nueva contraseña">
 
-                                        <input
-                                            type="password"
-                                            class="form-control"
-                                            id="NuevaContraseña"
-                                            name="NuevaContraseña"
-                                            placeholder="Introduce la nueva contraseña">
-
-
-                                        <button
-                                            type="button"
-                                            class="mostrar-password"
-                                            onclick="mostrarContraseña('NuevaContraseña')">
-
-                                            ◉
-
-                                        </button>
-
+                                        <button type="button" class="mostrar-password" onclick="mostrarContraseña('NuevaContraseña')"> ◉ </button>
 
                                     </div>
 
 
-                                    <small>
-
-                                        Define una nueva contraseña aquí.
-
-                                    </small>
+                                    <small>Define una nueva contraseña aquí.</small>
 
 
 
@@ -886,10 +591,7 @@ if (
                                     <?php
 
                                     if (isset($errores["NuevaContraseña"])) {
-
-                                        echo '<p class="text-danger mt-1">'
-                                            . $errores["NuevaContraseña"]
-                                            . '</p>';
+                                        echo '<p class="text-danger mt-1">' . $errores["NuevaContraseña"] . '</p>';
                                     }
 
                                     ?>
@@ -904,44 +606,19 @@ if (
                                 <div class="col-md-6 campo-password">
 
 
-                                    <label
-                                        for="ConfirmarContraseña"
-                                        class="form-label">
-
-                                        Confirmar contraseña
-
-                                    </label>
+                                    <label for="ConfirmarContraseña" class="form-label">Confirmar contraseña</label>
 
 
                                     <div class="password-contenedor">
 
+                                        <input type="password" class="form-control" id="ConfirmarContraseña" name="ConfirmarContraseña" placeholder="Repite la nueva contraseña">
 
-                                        <input
-                                            type="password"
-                                            class="form-control"
-                                            id="ConfirmarContraseña"
-                                            name="ConfirmarContraseña"
-                                            placeholder="Repite la nueva contraseña">
-
-
-                                        <button
-                                            type="button"
-                                            class="mostrar-password"
-                                            onclick="mostrarContraseña('ConfirmarContraseña')">
-
-                                            ◉
-
-                                        </button>
-
+                                        <button type="button" class="mostrar-password" onclick="mostrarContraseña('ConfirmarContraseña')"> ◉ </button>
 
                                     </div>
 
 
-                                    <small>
-
-                                        Repite la nueva contraseña aquí.
-
-                                    </small>
+                                    <small>Repite la nueva contraseña aquí.</small>
 
 
 
@@ -950,10 +627,7 @@ if (
                                     <?php
 
                                     if (isset($errores["ConfirmarContraseña"])) {
-
-                                        echo '<p class="text-danger mt-1">'
-                                            . $errores["ConfirmarContraseña"]
-                                            . '</p>';
+                                        echo '<p class="text-danger mt-1">' . $errores["ConfirmarContraseña"] . '</p>';
                                     }
 
                                     ?>
@@ -968,14 +642,7 @@ if (
 
                             <!-- CAMBIAR CONTRASEÑA -->
 
-                            <button
-                                type="submit"
-                                name="cambiar_contraseña"
-                                class="btn btn-primary btn-cambiar-password mt-4">
-
-                                Cambiar contraseña
-
-                            </button>
+                            <button type="submit" name="cambiar_contraseña" class="btn btn-primary btn-cambiar-password mt-4">Cambiar contraseña</button>
 
 
 
@@ -984,10 +651,7 @@ if (
                             <?php
 
                             if (isset($errores["CambiarContraseña"])) {
-
-                                echo '<p class="text-danger mt-2">'
-                                    . $errores["CambiarContraseña"]
-                                    . '</p>';
+                                echo '<p class="text-danger mt-2">' . $errores["CambiarContraseña"] . '</p>';
                             }
 
                             ?>
@@ -1011,22 +675,14 @@ if (
                     <div class="seccion-contenido">
 
 
-                        <h2 class="titulo-seccion">
-
-                            Plan tipo
-
-                        </h2>
+                        <h2 class="titulo-seccion">Plan tipo</h2>
 
 
 
                         <div class="plan-contenedor mt-4">
 
 
-                            <div class="plan-icono">
-
-                                ★
-
-                            </div>
+                            <div class="plan-icono">★</div>
 
 
                             <div>
@@ -1038,19 +694,9 @@ if (
 
                                 ?>
 
-                                    <h3 class="plan-titulo">
+                                    <h3 class="plan-titulo">Plan Pro</h3>
 
-                                        Plan Pro
-
-                                    </h3>
-
-
-                                    <p>
-
-                                        Estás utilizando el Plan Pro de Cursolandia.
-
-                                    </p>
-
+                                    <p>Estás utilizando el Plan Pro de Cursolandia.</p>
 
                                 <?php
 
@@ -1059,19 +705,9 @@ if (
 
                                 ?>
 
-                                    <h3 class="plan-titulo">
+                                    <h3 class="plan-titulo">Plan gratuito</h3>
 
-                                        Plan gratuito
-
-                                    </h3>
-
-
-                                    <p>
-
-                                        Estás utilizando el plan gratuito de Cursolandia.
-
-                                    </p>
-
+                                    <p>Estás utilizando el plan gratuito de Cursolandia.</p>
 
                                 <?php
 
@@ -1091,45 +727,17 @@ if (
 
                         <?php
 
-                        if (
-                            $PlanTipo == "pro" &&
-                            $FechaVencimiento != null
-                        ) {
+                        if ($PlanTipo == "pro" && $FechaVencimiento != null) {
 
                         ?>
 
                             <div class="plan-informacion">
 
+                                <span>ⓘ</span>
 
-                                <span>
-
-                                    ⓘ
-
-                                </span>
-
-
-                                <span>
-
-                                    Tu Plan Pro vence el
-
-                                    <strong>
-
-                                        <?php
-
-                                        echo date(
-                                            "d/m/Y",
-                                            strtotime($FechaVencimiento)
-                                        );
-
-                                        ?>
-
-                                    </strong>
-
-                                </span>
-
+                                <span>Tu Plan Pro vence el <strong><?php echo date("d/m/Y", strtotime($FechaVencimiento)); ?></strong></span>
 
                             </div>
-
 
                         <?php
 
@@ -1144,10 +752,7 @@ if (
                         <?php
 
                         if ($guardadoCorrecto) {
-
-                            echo '<p class="text-success text-end mt-4">
-                                    Cambios guardados correctamente.
-                                  </p>';
+                            echo '<p class="text-success text-end mt-4">Cambios guardados correctamente.</p>';
                         }
 
                         ?>
@@ -1159,10 +764,7 @@ if (
                         <?php
 
                         if (isset($errores["bd"])) {
-
-                            echo '<p class="text-danger text-end mt-4">'
-                                . $errores["bd"]
-                                . '</p>';
+                            echo '<p class="text-danger text-end mt-4">' . $errores["bd"] . '</p>';
                         }
 
                         ?>
@@ -1173,16 +775,7 @@ if (
 
                         <div class="guardar-contenedor">
 
-
-                            <button
-                                type="submit"
-                                name="guardar_cambios"
-                                class="btn btn-primary btn-guardar">
-
-                                Guardar cambios
-
-                            </button>
-
+                            <button type="submit" name="guardar_cambios" class="btn btn-primary btn-guardar">Guardar cambios</button>
 
                         </div>
 
@@ -1205,9 +798,15 @@ if (
 
     <!-- Bootstrap JS -->
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- JS MENU LATERAL -->
+
+    <script src="js/menu_lateral.js"></script>
+
+    <!-- JS NOTIFICACIONES RAPIDAS -->
+    <script src="js/notificaciones_rapidas.js"></script>
 
 
 
@@ -1218,8 +817,7 @@ if (
 
         function copiarId() {
 
-            let idUsuario =
-                document.getElementById("idUsuario").innerText;
+            let idUsuario = document.getElementById("idUsuario").innerText;
 
             navigator.clipboard.writeText(idUsuario);
         }
@@ -1230,17 +828,12 @@ if (
 
         function mostrarContraseña(idCampo) {
 
-            let campo =
-                document.getElementById(idCampo);
-
+            let campo = document.getElementById(idCampo);
 
             if (campo.type === "password") {
-
                 campo.type = "text";
-
             }
             else {
-
                 campo.type = "password";
             }
         }
@@ -1249,32 +842,24 @@ if (
 
         // PREVISUALIZAR FOTO DE PERFIL
 
-        document
-            .getElementById("FotoPerfil")
-            .addEventListener("change", function () {
+        document.getElementById("FotoPerfil").addEventListener("change", function () {
 
-                if (this.files && this.files[0]) {
+            if (this.files && this.files[0]) {
 
-                    let lector = new FileReader();
+                let lector = new FileReader();
 
+                lector.onload = function (evento) {
+                    document.getElementById("vistaFotoPerfil").src = evento.target.result;
+                };
 
-                    lector.onload = function (evento) {
-
-                        document
-                            .getElementById("vistaFotoPerfil")
-                            .src = evento.target.result;
-                    };
-
-
-                    lector.readAsDataURL(this.files[0]);
-                }
-            });
+                lector.readAsDataURL(this.files[0]);
+            }
+        });
 
 
     </script>
 
 
 </body>
-
 
 </html>

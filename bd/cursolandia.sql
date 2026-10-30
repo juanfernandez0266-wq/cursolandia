@@ -58,3 +58,43 @@ CREATE TABLE UsuarioInteres (
         REFERENCES Interes(idInteres)
 
 );
+
+
+
+//TABLA DE NOTIFICACIONES
+
+CREATE TABLE notificacion (
+    idNotificacion INT NOT NULL AUTO_INCREMENT,
+    idUsuario INT NOT NULL,
+    idUsuarioActor INT,
+    idCurso INT,
+    idPregunta INT,
+    idRespuesta INT,
+    Estado TINYINT NOT NULL,
+    TextoReferencia VARCHAR(255),
+    Leida TINYINT(1) NOT NULL DEFAULT 0,
+    Fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (idNotificacion),
+
+    FOREIGN KEY (idUsuario)
+    REFERENCES usuario(idUsuario),
+
+    FOREIGN KEY (idUsuarioActor)
+    REFERENCES usuario(idUsuario)
+);
+
+CREATE TABLE configuracionnotificacion (
+    idUsuario INT NOT NULL,
+
+    PreguntasCreadas TINYINT(1) NOT NULL DEFAULT 1,
+    Respuestas TINYINT(1) NOT NULL DEFAULT 1,
+    PreguntasCerradas TINYINT(1) NOT NULL DEFAULT 1,
+    RespuestasDestacadas TINYINT(1) NOT NULL DEFAULT 1,
+    PreguntasEliminadas TINYINT(1) NOT NULL DEFAULT 1,
+
+    PRIMARY KEY (idUsuario),
+
+    FOREIGN KEY (idUsuario)
+    REFERENCES usuario(idUsuario)
+);
