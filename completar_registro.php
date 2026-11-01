@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-$_SESSION["idUsuario"] = 2;
+
 
 require "clases/usuario.php";
 
