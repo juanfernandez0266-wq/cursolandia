@@ -1,6 +1,7 @@
 <?php
 
 session_start();
+$_SESSION["idUsuario"] = 2;
 
 require "clases/usuario.php";
 
@@ -39,6 +40,10 @@ $FechaNacimiento = "";
 $Intereses = array();
 $Antecedentes = "";
 
+$pasoActual = 1;
+
+$fechaMaxima = date("Y-m-d", strtotime("-18 years"));
+
 
 
 // FINALIZAR REGISTRO
@@ -54,40 +59,67 @@ if (isset($_POST["finalizar_registro"])) {
     $Antecedentes = $_POST["Antecedentes"];
 
 
+    // VALIDAR EDAD
+
+    if ($FechaNacimiento == "") {
+        $errores["FechaNacimiento"] = "Ingresá tu fecha de nacimiento.";
+    }
+    else if ($FechaNacimiento > $fechaMaxima) {
+        $errores["FechaNacimiento"] = "Debés tener al menos 18 años.";
+    }
+
+
     // FOTO DE PERFIL
 
     $FotoPerfil = null;
 
-    if (isset($_FILES["FotoPerfil"])) {
+    if (isset($_FILES["FotoPerfil"]) && $_FILES["FotoPerfil"]["error"] != UPLOAD_ERR_NO_FILE) {
         $FotoPerfil = $_FILES["FotoPerfil"];
     }
 
 
     // COMPLETAR PERFIL
 
-    $resultado = $usuarioActual->completarperfil(
-        $FechaNacimiento,
-        $Intereses,
-        $Antecedentes,
-        $FotoPerfil
-    );
+    if (count($errores) == 0) {
+
+        $resultado = $usuarioActual->completarperfil(
+            $FechaNacimiento,
+            $Intereses,
+            $Antecedentes,
+            $FotoPerfil
+        );
 
 
-    // SI HAY ERRORES
+        // SI HAY ERRORES
 
-    if (is_array($resultado)) {
+        if (is_array($resultado)) {
+            $errores = $resultado;
+        }
 
-        $errores = $resultado;
 
+        // SI EL REGISTRO SE COMPLETO CORRECTAMENTE
+
+        else {
+
+            header("Location: inicio.php");
+            exit;
+        }
     }
 
 
-    // SI EL REGISTRO SE COMPLETO CORRECTAMENTE
+    // VOLVER AL PASO QUE TIENE EL ERROR
 
+    if (isset($errores["FechaNacimiento"])) {
+        $pasoActual = 1;
+    }
+    else if (isset($errores["Intereses"])) {
+        $pasoActual = 2;
+    }
+    else if (isset($errores["Antecedentes"])) {
+        $pasoActual = 3;
+    }
     else {
-
-        header("Location: inicio.php");
-        exit;
+        $pasoActual = 4;
     }
 }
 
@@ -113,7 +145,7 @@ if (isset($_POST["finalizar_registro"])) {
 
     <!-- CSS PROPIO -->
 
-    <link rel="stylesheet" href="css/completar_registro.css">
+    <link rel="stylesheet" href="css/completar_registro.css?v=2">
 
 </head>
 
@@ -130,7 +162,7 @@ if (isset($_POST["finalizar_registro"])) {
             <form id="completarRegistro" method="POST" action="completar_registro.php" enctype="multipart/form-data">
 
 
-                <div id="pasosRegistro" class="carousel slide" data-bs-interval="false">
+                <div id="pasosRegistro" class="carousel slide carousel-fade" data-bs-interval="false" data-bs-touch="false">
 
 
                     <div class="carousel-inner">
@@ -139,7 +171,7 @@ if (isset($_POST["finalizar_registro"])) {
 
                         <!-- PASO 1 -->
 
-                        <div class="carousel-item active">
+                        <div class="carousel-item <?php if ($pasoActual == 1) { echo "active"; } ?>">
 
 
                             <div class="registro-contenido">
@@ -154,8 +186,8 @@ if (isset($_POST["finalizar_registro"])) {
 
                                 <div class="campo-grande">
 
-                                    <input type="date" class="form-control" id="FechaNacimiento" name="FechaNacimiento" value="<?php echo $FechaNacimiento; ?>">
-
+                                    <input type="date" class="form-control" id="FechaNacimiento" name="FechaNacimiento" max="<?php echo $fechaMaxima; ?>" value="<?php echo htmlspecialchars($FechaNacimiento); ?>">
+                                    <p class="campo-error" id="errorFecha"></p>
 
                                     <!-- VALIDACION -->
 
@@ -172,7 +204,7 @@ if (isset($_POST["finalizar_registro"])) {
 
                                 <div class="registro-navegacion justify-content-end">
 
-                                    <button type="button" class="boton-flecha" data-bs-target="#pasosRegistro" data-bs-slide="next"> → </button>
+                                    <button type="button" class="boton-flecha" id="siguienteFecha"> → </button>
 
                                 </div>
 
@@ -186,7 +218,7 @@ if (isset($_POST["finalizar_registro"])) {
 
                         <!-- PASO 2 -->
 
-                        <div class="carousel-item">
+                        <div class="carousel-item <?php if ($pasoActual == 2) { echo "active"; } ?>">
 
 
                             <div class="registro-contenido">
@@ -199,93 +231,62 @@ if (isset($_POST["finalizar_registro"])) {
                                 <p class="registro-descripcion">Elegí al menos un interés de tu preferencia</p>
 
 
-                                <div class="row g-3">
-
+                                <div class="row g-3" id="grupoIntereses">
 
 
                                     <!-- AFICIONES -->
 
                                     <div class="col-md-4">
 
-                                        <input type="checkbox" class="interes-check" id="aficiones" name="Intereses[]" value="Aficiones"
-                                        <?php
-                                        if (in_array("Aficiones", $Intereses)) {
-                                            echo "checked";
-                                        }
-                                        ?>>
+                                        <input type="checkbox" class="interes-check" id="aficiones" name="Intereses[]" value="Aficiones" <?php if (in_array("Aficiones", $Intereses)) { echo "checked"; } ?>>
 
                                         <label class="interes-opcion" for="aficiones">Aficiones</label>
 
                                     </div>
 
 
-
                                     <!-- MUSICA -->
 
                                     <div class="col-md-4">
 
-                                        <input type="checkbox" class="interes-check" id="musica" name="Intereses[]" value="Musica"
-                                        <?php
-                                        if (in_array("Musica", $Intereses)) {
-                                            echo "checked";
-                                        }
-                                        ?>>
+                                        <input type="checkbox" class="interes-check" id="musica" name="Intereses[]" value="Musica" <?php if (in_array("Musica", $Intereses)) { echo "checked"; } ?>>
 
                                         <label class="interes-opcion" for="musica">Música</label>
 
                                     </div>
 
 
-
                                     <!-- TECNOLOGIA -->
 
                                     <div class="col-md-4">
 
-                                        <input type="checkbox" class="interes-check" id="tecnologia" name="Intereses[]" value="Tecnologia"
-                                        <?php
-                                        if (in_array("Tecnologia", $Intereses)) {
-                                            echo "checked";
-                                        }
-                                        ?>>
+                                        <input type="checkbox" class="interes-check" id="tecnologia" name="Intereses[]" value="Tecnologia" <?php if (in_array("Tecnologia", $Intereses)) { echo "checked"; } ?>>
 
                                         <label class="interes-opcion" for="tecnologia">Tecnología</label>
 
                                     </div>
 
 
-
                                     <!-- SALUD -->
 
                                     <div class="col-md-6">
 
-                                        <input type="checkbox" class="interes-check" id="salud" name="Intereses[]" value="Salud"
-                                        <?php
-                                        if (in_array("Salud", $Intereses)) {
-                                            echo "checked";
-                                        }
-                                        ?>>
+                                        <input type="checkbox" class="interes-check" id="salud" name="Intereses[]" value="Salud" <?php if (in_array("Salud", $Intereses)) { echo "checked"; } ?>>
 
                                         <label class="interes-opcion" for="salud">Salud</label>
 
                                     </div>
 
 
-
                                     <!-- DEPORTES -->
 
                                     <div class="col-md-6">
 
-                                        <input type="checkbox" class="interes-check" id="deportes" name="Intereses[]" value="Deportes"
-                                        <?php
-                                        if (in_array("Deportes", $Intereses)) {
-                                            echo "checked";
-                                        }
-                                        ?>>
+                                        <input type="checkbox" class="interes-check" id="deportes" name="Intereses[]" value="Deportes" <?php if (in_array("Deportes", $Intereses)) { echo "checked"; } ?>>
 
                                         <label class="interes-opcion" for="deportes">Deportes</label>
 
                                     </div>
-
 
 
                                     <!-- VALIDACION -->
@@ -306,7 +307,7 @@ if (isset($_POST["finalizar_registro"])) {
 
                                     <button type="button" class="boton-flecha" data-bs-target="#pasosRegistro" data-bs-slide="prev"> ← </button>
 
-                                    <button type="button" class="boton-flecha" data-bs-target="#pasosRegistro" data-bs-slide="next"> → </button>
+                                    <button type="button" class="boton-flecha" id="siguienteIntereses"> → </button>
 
                                 </div>
 
@@ -320,7 +321,7 @@ if (isset($_POST["finalizar_registro"])) {
 
                         <!-- PASO 3 -->
 
-                        <div class="carousel-item">
+                        <div class="carousel-item <?php if ($pasoActual == 3) { echo "active"; } ?>">
 
 
                             <div class="registro-contenido">
@@ -334,7 +335,7 @@ if (isset($_POST["finalizar_registro"])) {
 
 
                                 <textarea class="form-control antecedentes" id="Antecedentes" name="Antecedentes" rows="5" placeholder="Escribí un poco sobre tu historia, estudios, experiencia..."><?php echo htmlspecialchars($Antecedentes); ?></textarea>
-
+                                <p class="campo-error" id="errorAntecedentes"></p>
 
                                 <!-- VALIDACION -->
 
@@ -346,12 +347,13 @@ if (isset($_POST["finalizar_registro"])) {
 
                                 ?>
 
+                                <p class="intereses-error" id="errorIntereses">Elegí al menos un interés para continuar.</p>
 
                                 <div class="registro-navegacion">
 
                                     <button type="button" class="boton-flecha" data-bs-target="#pasosRegistro" data-bs-slide="prev"> ← </button>
 
-                                    <button type="button" class="boton-flecha" data-bs-target="#pasosRegistro" data-bs-slide="next"> → </button>
+                                    <button type="button" class="boton-flecha" id="siguienteAntecedentes"> → </button>
 
                                 </div>
 
@@ -365,40 +367,44 @@ if (isset($_POST["finalizar_registro"])) {
 
                         <!-- PASO 4 -->
 
-                        <div class="carousel-item">
+                        <div class="carousel-item <?php if ($pasoActual == 4) { echo "active"; } ?>">
 
 
-                            <div class="registro-contenido text-center">
+                            <div class="registro-contenido registro-contenido-foto">
 
 
-                                <p class="registro-paso text-start">ENTRANDO A CURSOLANDIA 4/4</p>
+                                <p class="registro-paso">ENTRANDO A CURSOLANDIA 4/4</p>
 
-                                <h1>Agregá una foto de perfil</h1>
+                                <h1 class="titulo-foto">Agregá una foto de perfil</h1>
 
+
+                                <!-- FOTO DE PERFIL -->
 
                                 <div class="foto-perfil">
 
+                                    <label for="FotoPerfil" class="foto-seleccion">
 
-                                    <div class="foto-placeholder">👤</div>
+                                        <img src="imagenes/perfil_predeterminado.png" class="foto-preview" id="vistaFotoPerfil" alt="Foto de perfil">
 
-                                    <input type="file" id="FotoPerfil" name="FotoPerfil" accept=".jpg,.jpeg,.png">
+                                    </label>
 
-                                    <label for="FotoPerfil" class="boton-camara">📷</label>
+                                    <input type="file" id="FotoPerfil" name="FotoPerfil" class="foto-input" accept=".jpg,.jpeg,.png">
 
-
-
-                                    <!-- VALIDACION -->
-
-                                    <?php
-
-                                    if (isset($errores["FotoPerfil"])) {
-                                        echo '<p class="text-danger mt-2">' . $errores["FotoPerfil"] . '</p>';
-                                    }
-
-                                    ?>
-
+                                    <label for="FotoPerfil" class="boton-camara" title="Elegir foto">📷</label>
 
                                 </div>
+
+
+
+                                <!-- VALIDACION -->
+
+                                <?php
+
+                                if (isset($errores["FotoPerfil"])) {
+                                    echo '<p class="text-danger text-center mt-2">' . $errores["FotoPerfil"] . '</p>';
+                                }
+
+                                ?>
 
 
 
@@ -407,18 +413,20 @@ if (isset($_POST["finalizar_registro"])) {
                                 <?php
 
                                 if (isset($errores["bd"])) {
-                                    echo '<p class="text-danger mt-2">' . $errores["bd"] . '</p>';
+                                    echo '<p class="text-danger text-center mt-2">' . $errores["bd"] . '</p>';
                                 }
 
                                 ?>
 
 
-                                <button type="submit" name="finalizar_registro" class="btn btn-finalizar">Finalizar</button>
 
+                                <!-- NAVEGACION -->
 
-                                <div class="registro-navegacion justify-content-start">
+                                <div class="registro-navegacion registro-navegacion-final">
 
                                     <button type="button" class="boton-flecha" data-bs-target="#pasosRegistro" data-bs-slide="prev"> ← </button>
+
+                                    <button type="submit" name="finalizar_registro" class="btn-finalizar">Finalizar</button>
 
                                 </div>
 
@@ -448,6 +456,11 @@ if (isset($_POST["finalizar_registro"])) {
     <!-- Bootstrap JS -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- JS PROPIO -->
+
+    <script src="js/completar_registro.js?v=5"></script>
 
 
 </body>
