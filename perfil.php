@@ -3,6 +3,7 @@
 session_start();
 
 require "clases/usuario.php";
+require_once "clases/solicitudplanpro.php";
 
 
 
@@ -18,6 +19,8 @@ if (!isset($_SESSION["idUsuario"])) {
 
 
 
+
+    
 // BUSCAR AL USUARIO LOGUEADO
 
 $usuarioActual = Usuario::buscarPorId($_SESSION["idUsuario"]);
@@ -30,6 +33,35 @@ if ($usuarioActual == null) {
     header("Location: iniciar_sesion.php");
     exit;
 }
+
+
+// CONSULTAR SOLICITUDES DE PLAN PRO
+
+$solicitudesPro = SolicitudPlanPro::obtenerPorUsuario($usuarioActual->idUsuario);
+
+$solicitudPendiente = null;
+$solicitudAprobada = null;
+
+foreach ($solicitudesPro as $solicitud) {
+
+    if ($solicitud["Estado"] == "pendiente" && $solicitudPendiente == null) {
+        $solicitudPendiente = $solicitud;
+    }
+
+    if ($solicitud["Estado"] == "aprobada" && $solicitudAprobada == null) {
+        $solicitudAprobada = $solicitud;
+    }
+}
+
+
+// VERIFICAR EL PLAN ACTUAL
+
+$tipoPlan = strtolower(trim((string) $usuarioActual->PlanTipo));
+$fechaVencimiento = $usuarioActual->FechaVencimiento;
+
+$planProVigente = $tipoPlan == "pro"
+    && !empty($fechaVencimiento)
+    && substr($fechaVencimiento, 0, 10) >= date("Y-m-d");
 
 
 
@@ -184,8 +216,8 @@ if (
 
 
     <!-- CSS PROPIO -->
-
     <link rel="stylesheet" href="css/perfil.css">
+    <link rel="stylesheet" href="css/perfil_plan_pro.css?v=1">
 
 
     <!-- CSS MENU LATERAL -->
@@ -681,69 +713,110 @@ if (
 
                         <div class="plan-contenedor mt-4">
 
-
                             <div class="plan-icono">★</div>
 
+                                <div class="plan-perfil-resumen">
 
-                            <div>
+                                    <?php if ($tipoPlan == "pro"): ?>
 
+                                        <h3 class="plan-titulo">Plan Pro</h3>
+                                        <p>Estás utilizando el Plan Pro de Cursolandia.</p>
 
-                                <?php
+                                    <?php else: ?>
 
-                                if ($PlanTipo == "pro") {
+                                        <h3 class="plan-titulo">Plan gratuito</h3>
+                                        <p>Estás utilizando el plan gratuito de Cursolandia.</p>
 
-                                ?>
+                                    <?php endif; ?>
 
-                                    <h3 class="plan-titulo">Plan Pro</h3>
-
-                                    <p>Estás utilizando el Plan Pro de Cursolandia.</p>
-
-                                <?php
-
-                                }
-                                else {
-
-                                ?>
-
-                                    <h3 class="plan-titulo">Plan gratuito</h3>
-
-                                    <p>Estás utilizando el plan gratuito de Cursolandia.</p>
-
-                                <?php
-
-                                }
-
-                                ?>
-
-
-                            </div>
-
+                                </div>
 
                         </div>
 
 
+                        <!-- ESTADO DEL PLAN -->
 
-                        <!-- FECHA DE VENCIMIENTO -->
+                        <?php if ($planProVigente): ?>
 
-                        <?php
+                            <div class="plan-perfil-aviso">
+                                <span class="plan-perfil-aviso-icono">ⓘ</span>
 
-                        if ($PlanTipo == "pro" && $FechaVencimiento != null) {
-
-                        ?>
-
-                            <div class="plan-informacion">
-
-                                <span>ⓘ</span>
-
-                                <span>Tu Plan Pro vence el <strong><?php echo date("d/m/Y", strtotime($FechaVencimiento)); ?></strong></span>
-
+                                <div>
+                                    <strong>Plan Pro activo</strong>
+                                    <p>Tu Plan Pro vence el <?php echo date("d/m/Y", strtotime($fechaVencimiento)); ?>.</p>
+                                </div>
                             </div>
 
-                        <?php
+                            <details class="plan-perfil-detalles">
+                                <summary>Ver detalles</summary>
 
-                        }
+                                <div class="plan-perfil-datos">
 
-                        ?>
+                                    <p><strong>Tipo de plan:</strong> Pro</p>
+                                    <p><strong>Fecha de vencimiento:</strong> <?php echo date("d/m/Y", strtotime($fechaVencimiento)); ?></p>
+
+                                    <?php if ($solicitudAprobada != null): ?>
+
+                                        <p><strong>ID de solicitud:</strong> <?php echo (int) $solicitudAprobada["idSolicitud"]; ?></p>
+                                        <p><strong>ID de usuario:</strong> <?php echo (int) $solicitudAprobada["idUsuario"]; ?></p>
+                                        <p><strong>Estado:</strong> Aprobada</p>
+                                        <p><strong>Fecha de solicitud:</strong> <?php echo date("d/m/Y H:i", strtotime($solicitudAprobada["FechaSolicitud"])); ?></p>
+                                        <p><strong>Mensaje:</strong> <?php echo nl2br(htmlspecialchars($solicitudAprobada["Mensaje"] ?: "Sin mensaje")); ?></p>
+                                        <p><strong>Comprobante:</strong> <?php echo htmlspecialchars($solicitudAprobada["NombreComprobante"]); ?></p>
+
+                                    <?php endif; ?>
+
+                                </div>
+                            </details>
+
+
+                        <?php elseif ($tipoPlan == "pro"): ?>
+
+                            <div class="plan-perfil-aviso">
+                                <span class="plan-perfil-aviso-icono">ⓘ</span>
+
+                                <div>
+                                    <strong>Plan Pro sin vigencia actual</strong>
+                                    <p>El plan no tiene una fecha de vencimiento vigente.</p>
+                                </div>
+                            </div>
+
+                            <details class="plan-perfil-detalles">
+                                <summary>Ver detalles</summary>
+
+                                <div class="plan-perfil-datos">
+
+                                    <p><strong>Tipo de plan registrado:</strong> Pro</p>
+                                    <p><strong>Fecha de vencimiento:</strong> <?php echo $fechaVencimiento ? date("d/m/Y", strtotime($fechaVencimiento)) : "No disponible"; ?></p>
+
+                                    <?php if ($solicitudAprobada != null): ?>
+                                        <p><strong>ID de solicitud:</strong> <?php echo (int) $solicitudAprobada["idSolicitud"]; ?></p>
+                                        <p><strong>Estado:</strong> Aprobada</p>
+                                    <?php endif; ?>
+
+                                </div>
+                            </details>
+
+
+                        <?php elseif ($solicitudPendiente != null): ?>
+
+                            <div class="plan-perfil-aviso">
+                                <span class="plan-perfil-aviso-icono">◷</span>
+
+                                <div>
+                                    <strong>Solicitud pendiente de revisión</strong>
+                                    <p>Tu solicitud fue enviada y está esperando la confirmación del administrador.</p>
+                                </div>
+                            </div>
+
+                            <a href="solicitar_plan_pro.php" class="plan-perfil-boton">Ver solicitud</a>
+
+
+                        <?php else: ?>
+
+                            <a href="solicitar_plan_pro.php" class="plan-perfil-boton">Solicitar Plan Pro</a>
+
+                        <?php endif; ?>
 
 
 

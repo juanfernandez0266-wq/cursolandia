@@ -1,0 +1,611 @@
+
+/* CUERPO DE LA PAGINA */
+
+body {
+    margin: 0;
+    background-color: #f7f7f7;
+}
+
+
+
+/* CONTENIDO GENERAL */
+
+.pagina-solicitud-pro {
+    max-width: 1000px;
+    margin-top: 40px;
+    margin-bottom: 60px;
+
+    padding: 45px !important;
+
+    background-color: #ffffff;
+    border: 1px solid #e0e3e8;
+    border-radius: 16px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+
+/* TITULO PRINCIPAL */
+
+.pagina-solicitud-pro > h1 {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #e0e3e8;
+
+    font-size: 32px;
+    font-weight: 650;
+    color: #17213c;
+}
+
+
+/* TITULOS DE LAS ETAPAS */
+
+#pasoSolicitud h2,
+#pasoDetalle h2 {
+    margin-bottom: 12px;
+
+    font-size: 24px;
+    font-weight: 600;
+    color: #17213c;
+}
+
+
+/* DESCRIPCIONES */
+
+#pasoSolicitud > p,
+#pasoDetalle > p {
+    margin-bottom: 30px;
+
+    font-size: 16px;
+    color: #666666;
+    line-height: 1.6;
+}
+
+
+
+/* CAMPOS DEL FORMULARIO */
+
+.pagina-solicitud-pro .form-label {
+    margin-bottom: 10px;
+
+    font-size: 16px;
+    font-weight: 600;
+    color: #202a42;
+}
+
+.pagina-solicitud-pro .form-control {
+    padding: 15px 18px;
+
+    border: 1px solid #d8dde5;
+    border-radius: 12px;
+
+    background-color: #ffffff;
+    color: #222222;
+
+    font-size: 16px;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.pagina-solicitud-pro .form-control:hover {
+    border-color: #adc0da;
+}
+
+.pagina-solicitud-pro .form-control:focus {
+    border-color: #7197c5;
+    box-shadow: 0 0 0 4px rgba(90, 130, 185, 0.10);
+}
+
+
+
+/* CAMPO MENSAJE */
+
+#Mensaje {
+    min-height: 145px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+
+
+/* COMPROBANTE DE TRANSFERENCIA */
+
+.comprobante-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.comprobante-zona {
+    width: 100%;
+    min-height: 205px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    padding: 28px 20px;
+
+    border: 2px dashed #ccd3dc;
+    border-radius: 14px;
+
+    background-color: #f5f6f8;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.30s ease,
+        border-color 0.30s ease,
+        transform 0.30s ease,
+        box-shadow 0.30s ease;
+}
+
+.comprobante-zona:hover {
+    background-color: #eaf3ff;
+    border-color: #86b2f5;
+
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(13, 110, 253, 0.08);
+}
+
+.comprobante-input:focus-visible + .comprobante-zona {
+    outline: 3px solid #86b2f5;
+    outline-offset: 3px;
+}
+
+
+/* ICONO */
+
+.comprobante-icono {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+
+    transition: transform 0.30s ease;
+}
+
+.comprobante-zona:hover .comprobante-icono {
+    transform: translateY(-4px);
+}
+
+
+/* TITULO */
+
+.comprobante-titulo {
+    max-width: 100%;
+    font-size: 19px;
+    font-weight: 600;
+    color: #112044;
+
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+
+/* DESCRIPCION */
+
+.comprobante-descripcion {
+    font-size: 15px;
+    color: #666666;
+    text-align: center;
+}
+
+
+
+/* BOTONES PRINCIPALES */
+
+.pagina-solicitud-pro .btn-primary {
+    min-height: 52px;
+    padding: 12px 28px;
+
+    border: 1px solid #0d6efd;
+    border-radius: 26px;
+
+    background-color: #0d6efd;
+    color: #ffffff;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.pagina-solicitud-pro .btn-primary:hover {
+    background-color: #3b82ff;
+    border-color: #3b82ff;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(13, 110, 253, 0.18);
+}
+
+.pagina-solicitud-pro .btn-primary:active {
+    background-color: #0b5ed7;
+    border-color: #0b5ed7;
+    transform: translateY(0);
+}
+
+
+
+/* BOTON CONTINUAR */
+
+#continuarSolicitud {
+    width: 100%;
+    margin-top: 12px;
+}
+
+
+
+/* BOTON VOLVER */
+
+.pagina-solicitud-pro .btn-outline-secondary {
+    min-height: 52px;
+    padding: 12px 28px;
+
+    border: 1px solid #0d6efd;
+    border-radius: 26px;
+
+    background-color: #ffffff;
+    color: #0d6efd;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    transition:
+        background-color 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.pagina-solicitud-pro .btn-outline-secondary:hover {
+    background-color: #eaf3ff;
+    border-color: #0d6efd;
+    color: #0d6efd;
+
+    transform: translateY(-2px);
+}
+
+
+
+/* DETALLE DE LA SOLICITUD */
+
+#pasoDetalle {
+    animation: entrada-detalle 0.45s ease;
+}
+
+#pasoDetalle > p:has(strong) {
+    margin-bottom: 20px;
+    color: #333333;
+}
+
+#pasoDetalle > p strong {
+    color: #17213c;
+}
+
+
+/* BOTONES DEL DETALLE */
+
+#pasoDetalle .btn {
+    width: calc(50% - 8px);
+    margin-top: 25px;
+}
+
+#pasoDetalle .btn-outline-secondary {
+    margin-right: 12px;
+}
+
+
+
+/* SOLICITUD REGISTRADA */
+
+.pagina-solicitud-pro > p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #555555;
+}
+
+.pagina-solicitud-pro > p:has(strong) {
+    padding: 14px 18px;
+    margin-bottom: 10px;
+
+    background-color: #f7f9fc;
+
+    border: 1px solid #e8edf3;
+    border-radius: 10px;
+}
+
+.pagina-solicitud-pro > p strong {
+    color: #17213c;
+}
+
+
+
+/* MENSAJES DE ERROR */
+
+.pagina-solicitud-pro .text-danger {
+    margin-top: 10px;
+    font-size: 15px;
+    color: #dc3545 !important;
+}
+
+
+
+/* TRANSICIONES */
+
+#pasoSolicitud {
+    animation: entrada-detalle 0.45s ease;
+}
+
+@keyframes entrada-detalle {
+
+    0% {
+        opacity: 0;
+        transform: translateY(-14px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* RESPETAR LOS ELEMENTOS OCULTOS POR JAVASCRIPT */
+
+.pagina-solicitud-pro [hidden] {
+    display: none !important;
+}
+
+
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .pagina-solicitud-pro {
+        margin-top: 20px;
+        padding: 28px 22px !important;
+        border-radius: 12px;
+    }
+
+    .pagina-solicitud-pro > h1 {
+        font-size: 27px;
+    }
+
+    #pasoSolicitud h2,
+    #pasoDetalle h2 {
+        font-size: 22px;
+    }
+
+    #pasoDetalle .btn {
+        width: 100%;
+        margin-top: 12px;
+    }
+
+    #pasoDetalle .btn-outline-secondary {
+        margin-right: 0;
+    }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+    #pasoSolicitud,
+    #pasoDetalle {
+        animation: none;
+    }
+
+    .pagina-solicitud-pro .btn {
+        transition: none;
+    }
+}
+
+
+/* ANIMACION ENTRE PANTALLAS */
+
+#pasoSolicitud:not([hidden]):not(.paso-saliendo),
+#pasoDetalle:not([hidden]):not(.paso-saliendo) {
+    animation: entrada-paso 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+
+/* DESAPARECER PANTALLA ANTERIOR */
+
+#pasoSolicitud.paso-saliendo,
+#pasoDetalle.paso-saliendo {
+    animation: salida-paso 0.24s ease forwards;
+}
+
+
+/* ENTRADA DESDE ARRIBA */
+
+@keyframes entrada-paso {
+
+    0% {
+        opacity: 0;
+        transform: translateY(-28px);
+    }
+
+    45% {
+        opacity: 0.45;
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* SALIDA GRADUAL */
+
+@keyframes salida-paso {
+
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+}
+
+
+/* ANIMACION DE LA CONFIRMACION */
+
+.pagina-solicitud-pro {
+    animation: entrada-paso 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+
+/* ENCABEZADO DEL DETALLE */
+
+.detalle-encabezado {
+    margin-bottom: 30px;
+}
+
+.detalle-etapa {
+    margin-bottom: 12px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: #777777;
+}
+
+.detalle-encabezado h2 {
+    margin-bottom: 10px;
+}
+
+.detalle-encabezado > p:last-child {
+    margin-bottom: 0;
+    color: #666666;
+    font-size: 16px;
+}
+
+
+/* RESUMEN DE LA SOLICITUD */
+
+.detalle-resumen {
+    border: 1px solid #dfe3e8;
+    border-radius: 14px;
+    background-color: #ffffff;
+    overflow: hidden;
+}
+
+.detalle-dato {
+    padding: 23px 26px;
+    border-bottom: 1px solid #e8ebef;
+}
+
+.detalle-dato:last-child {
+    border-bottom: none;
+}
+
+.detalle-etiqueta {
+    display: block;
+    margin-bottom: 10px;
+    color: #666666;
+    font-size: 14px;
+}
+
+.detalle-dato > p {
+    margin: 0;
+    font-size: 16px;
+    color: #202020;
+}
+
+#detalleMensaje {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+
+/* COMPROBANTE DEL DETALLE */
+
+.detalle-archivo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.detalle-icono {
+    width: 52px;
+    height: 52px;
+    padding: 12px;
+    border-radius: 10px;
+    background-color: #f1f4f8;
+    object-fit: contain;
+}
+
+.detalle-archivo p {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #202020;
+    overflow-wrap: anywhere;
+}
+
+.detalle-archivo span {
+    color: #777777;
+    font-size: 13px;
+}
+
+
+/* ACLARACION */
+
+.detalle-aclaracion {
+    margin: 22px 0;
+    color: #666666;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* NAVEGACION DEL DETALLE */
+
+.pagina-solicitud-pro #pasoDetalle .detalle-acciones {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.pagina-solicitud-pro #pasoDetalle .detalle-acciones .btn {
+    flex: 1;
+    width: auto;
+    margin: 0;
+}
+
+.pagina-solicitud-pro #pasoDetalle .detalle-acciones .btn-outline-secondary {
+    margin-right: 0;
+}
+
+
+/* RESPONSIVE DEL DETALLE */
+
+@media (max-width: 768px) {
+
+    .detalle-dato {
+        padding: 20px;
+    }
+
+    .pagina-solicitud-pro #pasoDetalle .detalle-acciones {
+        flex-direction: column;
+    }
+
+    .pagina-solicitud-pro #pasoDetalle .detalle-acciones .btn {
+        width: 100%;
+    }
+}
