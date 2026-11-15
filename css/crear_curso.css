@@ -1,13 +1,63 @@
 /* PAGINA CREAR CURSO */
 
 body {
-    background-color: #f7f7f7;
+    margin: 0;
+    background-color: #f4f7fa;
+    color: #0e1320;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .crear-curso-pagina {
     max-width: 1500px;
 }
 
+/* CENTRAMOS EL CONTENIDO DE CREAR CURSO */
+
+.crear-curso-contenido {
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* ENCABEZADO DE CREAR CURSO */
+
+.crear-curso-encabezado {
+    margin-bottom: 24px;
+    padding: 30px 35px;
+
+    background-color: #ffffff;
+    border: 1px solid #e0e3e8;
+    border-radius: 16px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+.crear-curso-encabezado h1 {
+    margin: 0 0 15px;
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid #e0e3e8;
+
+    font-size: 32px;
+    font-weight: 650;
+    color: #17213c;
+}
+
+.crear-curso-encabezado p {
+    margin: 0;
+    color: #657084;
+    font-size: 16px;
+}
+
+@media (max-width: 600px) {
+    .crear-curso-encabezado {
+        padding: 24px 20px;
+    }
+
+    .crear-curso-encabezado h1 {
+        font-size: 27px;
+    }
+}
 /* DISTRIBUCION GENERAL */
 
 .crear-curso-grid {
@@ -402,4 +452,108 @@ body {
     width: 60px;
     height: 60px;
     object-fit: contain;
+}
+
+/* INDICAMOS QUE SE PUEDEN ARRASTRAR IMAGENES */
+
+.imagen-ayuda {
+    font-size: 14px;
+    font-weight: 400;
+    color: #858c96;
+}
+
+.curso-imagen-principal.con-imagen .imagen-ayuda {
+    display: none;
+}
+
+
+/* DESTACAMOS EL RECUADRO AL ARRASTRAR */
+
+.curso-imagen-principal.arrastrando,
+.curso-miniatura.arrastrando {
+    background-color: #eaf3ff;
+
+    outline: 3px dashed #0d6efd;
+    outline-offset: -6px;
+
+    box-shadow: 0 7px 18px rgba(13, 110, 253, 0.12);
+
+    transform: translateY(-2px);
+
+}
+
+
+
+/* CONTENEDORES DE LAS IMAGENES */
+
+.imagen-contenedor-principal,
+.imagen-contenedor-miniatura {
+    position: relative;
+}
+
+.imagen-contenedor-principal {
+    margin-top: 30px;
+}
+
+.imagen-contenedor-principal .curso-imagen-principal {
+    margin-top: 0;
+}
+
+.imagen-contenedor-miniatura {
+    flex: 0 1 105px;
+    min-width: 0;
+}
+
+.imagen-contenedor-miniatura .curso-miniatura {
+    width: 100%;
+}
+
+
+/* BOTON PARA QUITAR IMAGENES */
+
+.imagen-quitar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border: none;
+    border-radius: 50%;
+
+    background-color: rgba(0, 0, 0, 0.65);
+    color: #ffffff;
+
+    font-size: 23px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+.imagen-quitar:hover {
+    background-color: #dc3545;
+}
+
+.imagen-contenedor-miniatura .imagen-quitar {
+    top: 5px;
+    right: 5px;
+    width: 25px;
+    height: 25px;
+    font-size: 18px;
+}
+
+
+/* INDICAMOS QUE LAS IMAGENES SE PUEDEN MOVER */
+
+.curso-imagen-principal[draggable="true"],
+.curso-miniatura[draggable="true"] {
+    cursor: grab;
 }

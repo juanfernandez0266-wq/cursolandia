@@ -5,14 +5,28 @@ session_start();
 require_once __DIR__ . "/clases/curso.php";
 
 
+//LEEMOS LOS FILTROS DE BUSQUEDA
+
+$busqueda = is_string($_GET["buscar"] ?? null) ? trim($_GET["buscar"]) : "";
+$busqueda = mb_substr($busqueda, 0, 100);
+
+$etiquetaRecibida = $_GET["etiqueta"] ?? "0";
+$idEtiqueta = is_string($etiquetaRecibida) && ctype_digit($etiquetaRecibida)
+    ? (int) $etiquetaRecibida
+    : 0;
+
+
 // OBTENEMOS LOS CURSOS GUARDADOS EN MYSQL
 
 $cursosDisponibles = [];
+$etiquetasDisponibles = [];
 $errorCursos = "";
 
 try {
 
-    $cursosDisponibles = Curso::obtenerCursosParaInicio();
+    $etiquetasDisponibles = Curso::obtenerEtiquetasDisponibles();
+
+    $cursosDisponibles = Curso::obtenerCursosParaInicio($busqueda, $idEtiqueta);
 
 } catch (Throwable $e) {
 
@@ -41,7 +55,7 @@ try {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!-- CSS propio -->
-    <link rel="stylesheet" href="css/inicio.css?v=3">
+    <link rel="stylesheet" href="css/inicio.css?v=5">
 
     <!-- CSS MENU LATERAL -->
      <link rel="stylesheet" href="css/menu_lateral.css?v=2">
@@ -72,23 +86,47 @@ try {
 
             <div class="topbar-contenido">
 
-                <div class="topbar-busqueda">
+                <!-- BUSCAMOS CURSOS POR TITULO O ETIQUETAS -->
+
+                <form class="topbar-busqueda" method="GET" action="inicio.php">
+
+                    <!-- BUSCADOR -->
 
                     <div class="buscador">
-                        <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Buscar cursos">
+
+                        <button type="submit" class="buscador-enviar" aria-label="Buscar cursos">
+                            <i class="bi bi-search"></i>
+                        </button>
+
+                        <input type="search"
+                            name="buscar"
+                            maxlength="100"
+                            placeholder="Buscar cursos"
+                            value="<?php echo htmlspecialchars($busqueda, ENT_QUOTES, 'UTF-8'); ?>">
+
                     </div>
 
-                    <select class="form-select filtro-cursos">
-                        <option selected>Todos los cursos</option>
-                        <option>Tecnología</option>
-                        <option>Deportes</option>
-                        <option>Salud</option>
-                        <option>Música</option>
-                        <option>Aficiones</option>
+
+                    <!-- FILTRAMOS POR ETIQUETAS -->
+
+                    <select name="etiqueta" class="form-select filtro-cursos" onchange="this.form.requestSubmit()">
+
+                        <option value="0">Todos los cursos</option>
+
+                        <?php foreach ($etiquetasDisponibles as $etiqueta): ?>
+
+                            <option value="<?php echo (int) $etiqueta["idInteres"]; ?>"
+                                <?php echo $idEtiqueta === (int) $etiqueta["idInteres"] ? "selected" : ""; ?>>
+
+                                <?php echo htmlspecialchars($etiqueta["NombreInteres"], ENT_QUOTES, "UTF-8"); ?>
+
+                            </option>
+
+                        <?php endforeach; ?>
+
                     </select>
 
-                </div>
+                </form>
 
                 <div class="topbar-acciones">
 
@@ -129,9 +167,18 @@ try {
                 <?php elseif (empty($cursosDisponibles)): ?>
 
                     <div class="alert alert-light border">
-                        Todavía no hay cursos disponibles.
-                    </div>
 
+                        <?php if ($busqueda !== "" || $idEtiqueta > 0): ?>
+
+                            No encontramos cursos que coincidan con tu búsqueda.
+
+                        <?php else: ?>
+
+                            Todavía no hay cursos disponibles.
+
+                        <?php endif; ?>
+
+                    </div>
                 <?php else: ?>
 
                     <div class="row g-4">

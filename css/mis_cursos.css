@@ -1,0 +1,378 @@
+
+/* PAGINA MIS CURSOS */
+
+body {
+    margin: 0;
+    background-color: #f4f7fa;
+    color: #0e1320;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+
+/* CONTENIDO GENERAL */
+
+.mis-cursos-pagina {
+    min-height: 100vh;
+    padding: 45px 25px 65px;
+}
+
+.mis-cursos-contenido {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+/* PANEL PRINCIPAL */
+
+.mis-cursos-panel {
+    background-color: #ffffff;
+    border: 1px solid #e0e3e8;
+    border-radius: 16px;
+
+    padding: 35px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+
+/* ENCABEZADO */
+
+.mis-cursos-encabezado {
+    margin-bottom: 30px;
+}
+
+.mis-cursos-encabezado h1 {
+    margin: 0 0 15px;
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid #e0e3e8;
+
+    font-size: 32px;
+    font-weight: 650;
+    color: #17213c;
+}
+
+.mis-cursos-encabezado p {
+    margin: 0;
+    font-size: 16px;
+    color: #657084;
+}
+
+
+/* PESTAÑAS */
+
+.mis-cursos-pestanas {
+    display: flex;
+    gap: 24px;
+
+    margin-bottom: 35px;
+
+    border-bottom: 1px solid #e3e8ef;
+}
+
+.mis-cursos-pestana {
+    position: relative;
+
+    padding: 14px 8px;
+
+    border: none;
+    background: transparent;
+
+    color: #697386;
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: color 0.2s ease;
+}
+
+.mis-cursos-pestana:hover {
+    color: #0d6efd;
+}
+
+.mis-cursos-pestana.activa {
+    color: #0d6efd;
+}
+
+.mis-cursos-pestana.activa::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+
+    height: 3px;
+
+    background-color: #0d6efd;
+    border-radius: 3px 3px 0 0;
+}
+
+.mis-cursos-pestana:focus-visible {
+    outline: 2px solid #86b2f5;
+    outline-offset: 3px;
+}
+
+
+/* CONTENIDO DE CADA PESTAÑA */
+
+.mis-cursos-seccion[hidden] {
+    display: none !important;
+}
+
+.mis-cursos-seccion-titulo {
+    margin-bottom: 25px;
+}
+
+.mis-cursos-seccion-titulo h2 {
+    margin: 0 0 8px;
+
+    font-size: 23px;
+    font-weight: 600;
+    color: #17213c;
+}
+
+.mis-cursos-seccion-titulo p {
+    margin: 0;
+    font-size: 15px;
+    color: #657084;
+}
+
+
+/* FILAS DE CURSOS */
+
+.mis-cursos-fila {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+
+    padding: 22px 0;
+
+    border-bottom: 1px solid #e8ebef;
+}
+
+.mis-cursos-fila:last-child {
+    border-bottom: none;
+}
+
+
+/* IMAGEN DEL CURSO */
+
+.mis-cursos-imagen {
+    flex: 0 0 165px;
+
+    width: 165px;
+    aspect-ratio: 16 / 9;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+    background-color: #eef0f4;
+
+    color: #9299a4;
+    font-size: 36px;
+
+    overflow: hidden;
+}
+
+.mis-cursos-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* INFORMACION DEL CURSO */
+
+.mis-cursos-informacion {
+    flex: 1;
+    min-width: 0;
+}
+
+.mis-cursos-informacion h3 {
+    margin: 6px 0 8px;
+
+    font-size: 19px;
+    font-weight: 600;
+    color: #17213c;
+}
+
+.mis-cursos-informacion p {
+    margin: 0 0 10px;
+
+    font-size: 14px;
+    color: #657084;
+}
+
+.mis-cursos-demo {
+    font-size: 12px;
+    color: #8490a3;
+}
+
+.mis-cursos-estado {
+    display: inline-block;
+
+    padding: 5px 11px;
+
+    border-radius: 20px;
+    background-color: #e9f5ee;
+
+    color: #167447;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.mis-cursos-estado.pendiente {
+    background-color: #fff3df;
+    color: #95620b;
+}
+
+
+/* ACCIONES DE EJEMPLO */
+
+.mis-cursos-accion {
+    flex-shrink: 0;
+
+    min-width: 145px;
+    padding: 11px 17px;
+
+    border-radius: 24px;
+
+    background-color: #0d6efd;
+    color: #ffffff;
+
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ESTOS ELEMENTOS SON SOLO VISUALES */
+
+.mis-cursos-accion.secundaria {
+    background-color: #ffffff;
+    border: 1px solid #0d6efd;
+    color: #0d6efd;
+}
+
+
+/* CONTADOR DE INSCRIPCIONES */
+
+.mis-cursos-limite {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 15px 18px;
+    margin-bottom: 12px;
+
+    background-color: #f0f7ff;
+    border: 1px solid #d6e6fb;
+    border-radius: 10px;
+
+    font-size: 14px;
+    color: #304c70;
+}
+
+.mis-cursos-limite i {
+    font-size: 19px;
+    color: #0d6efd;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .mis-cursos-pagina {
+        padding: 25px 15px;
+    }
+
+    .mis-cursos-panel {
+        padding: 24px 20px;
+    }
+
+    .mis-cursos-fila {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .mis-cursos-imagen {
+        flex-basis: 125px;
+        width: 125px;
+    }
+
+    .mis-cursos-accion {
+        width: 100%;
+    }
+
+    .mis-cursos-pestanas {
+        gap: 12px;
+    }
+
+    .mis-cursos-pestana {
+        font-size: 14px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .mis-cursos-encabezado h1 {
+        font-size: 27px;
+    }
+
+    .mis-cursos-fila {
+        align-items: flex-start;
+    }
+
+    .mis-cursos-imagen {
+        flex: 0 0 100%;
+        width: 100%;
+        max-width: 220px;
+    }
+
+}
+
+/* MOSTRAMOS UN MENSAJE SI NO HAY CURSOS */
+
+.mis-cursos-vacio {
+    padding: 55px 20px;
+    text-align: center;
+    color: #657084;
+}
+
+.mis-cursos-vacio i {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 45px;
+    color: #a0aabc;
+}
+
+.mis-cursos-vacio p {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.mis-cursos-vacio .btn {
+    padding: 11px 25px;
+    border-radius: 24px;
+}
+
+/* FECHAS DE LOS CURSOS */
+
+.mis-cursos-fechas {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    color: #657084;
+    font-size: 14px;
+}
+
+.mis-cursos-fechas i {
+    color: #0d6efd;
+}

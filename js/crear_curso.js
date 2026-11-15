@@ -104,63 +104,287 @@ function actualizarCosto() {
 tipoCurso.addEventListener("change", actualizarCosto);
 actualizarCosto();
 
-// PREVISUALIZAR IMAGENES DEL CURSO
+// PREVISUALIZAMOS Y ARRASTRAMOS IMAGENES DEL CURSO
 
 let camposImagenes = document.querySelectorAll(".imagen-input");
 let errorImagenes = document.getElementById("errorImagenes");
 
+// IDENTIFICAMOS LA IMAGEN QUE ESTAMOS MOVIENDO
+
+let imagenArrastrada = null;
+
+
+// MOSTRAMOS ERRORES DE LAS IMAGENES
+
+function mostrarErrorImagen(mensaje) {
+
+    errorImagenes.textContent = mensaje;
+    errorImagenes.hidden = false;
+
+}
+
+
+// ACTUALIZAMOS LA VISTA PREVIA
+
+function actualizarVistaImagen(campo) {
+
+    let archivo = campo.files[0];
+    let contenedor = campo.closest("label");
+    let vista = contenedor.querySelector(".imagen-preview");
+    let botonQuitar = contenedor.parentElement.querySelector(".imagen-quitar");
+
+
+    // LIMPIAMOS LA VISTA SI NO HAY IMAGEN
+
+    if (!archivo) {
+
+        vista.removeAttribute("src");
+        vista.hidden = true;
+
+        contenedor.classList.remove("con-imagen");
+        botonQuitar.hidden = true;
+        contenedor.draggable = false;
+
+        return;
+    }
+
+
+    // VALIDAMOS EL FORMATO Y EL TAMAÑO
+
+    let tiposPermitidos = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!tiposPermitidos.includes(archivo.type) ||
+        archivo.size === 0 ||
+       archivo.size > 5 * 1024 * 1024) {
+
+        mostrarErrorImagen("Seleccioná una imagen JPG, PNG o WEBP de hasta 5 MB.");
+
+        campo.value = "";
+
+        vista.removeAttribute("src");
+        vista.hidden = true;
+
+        contenedor.classList.remove("con-imagen");
+
+        return;
+    }
+
+
+    // MOSTRAMOS LA IMAGEN SELECCIONADA
+
+    errorImagenes.hidden = true;
+    // MOSTRAMOS LA X Y PERMITIMOS MOVER LA IMAGEN
+
+    botonQuitar.hidden = false;
+    contenedor.draggable = true;
+
+    let lector = new FileReader();
+
+    lector.onload = function (evento) {
+
+        if (campo.files[0] !== archivo) {
+            return;
+        }
+
+        vista.src = evento.target.result;
+        vista.hidden = false;
+
+        contenedor.classList.add("con-imagen");
+
+    };
+
+    lector.readAsDataURL(archivo);
+
+}
+
+
+// ACTIVAMOS LA SELECCION Y EL ARRASTRE EN CADA RECUADRO
+
 camposImagenes.forEach(function (campo) {
+
+    let zona = campo.closest("label");
+    let profundidadArrastre = 0;
+    // QUITAMOS LA IMAGEN SELECCIONADA
+
+    let botonQuitar = zona.parentElement.querySelector(".imagen-quitar");
+
+    botonQuitar.addEventListener("click", function (evento) {
+
+        evento.preventDefault();
+        evento.stopPropagation();
+
+        campo.value = "";
+
+        actualizarVistaImagen(campo);
+
+    });
+
+
+    // SELECCIONAMOS UNA IMAGEN CON EL EXPLORADOR
 
     campo.addEventListener("change", function () {
 
-        let archivo = campo.files[0];
-        let contenedor = campo.closest("label");
-        let vista = contenedor.querySelector(".imagen-preview");
+        actualizarVistaImagen(campo);
 
-        errorImagenes.hidden = true;
+    });
 
-        // SIN ARCHIVO SELECCIONADO
+    // COMENZAMOS A MOVER UNA IMAGEN ENTRE RECUADROS
 
-        if (!archivo) {
-            vista.removeAttribute("src");
-            vista.hidden = true;
-            contenedor.classList.remove("con-imagen");
+    zona.addEventListener("dragstart", function (evento) {
+
+        if (campo.files.length === 0) {
+            evento.preventDefault();
             return;
         }
 
-        // VALIDAR FORMATO Y TAMAÑO
+        imagenArrastrada = campo;
 
-        let tiposPermitidos = ["image/jpeg", "image/png", "image/webp"];
+        evento.dataTransfer.effectAllowed = "move";
+        evento.dataTransfer.setData("text/plain", "mover-imagen");
 
-        if (!tiposPermitidos.includes(archivo.type) || archivo.size === 0 || archivo.size > 5 * 1024 * 1024) {
+    });
 
-            errorImagenes.textContent = "Seleccioná una imagen JPG, PNG o WEBP de hasta 5 MB.";
-            errorImagenes.hidden = false;
 
-            campo.value = "";
-            vista.removeAttribute("src");
-            vista.hidden = true;
-            contenedor.classList.remove("con-imagen");
+    // TERMINAMOS DE MOVER LA IMAGEN
+
+    zona.addEventListener("dragend", function () {
+
+        imagenArrastrada = null;
+
+        document.querySelectorAll(
+            ".curso-imagen-principal, .curso-miniatura"
+        ).forEach(function (recuadro) {
+
+            recuadro.classList.remove("arrastrando");
+
+        });
+
+    });
+    
+    
+    
+    // DETECTAMOS CUANDO ENTRA UNA IMAGEN
+
+    zona.addEventListener("dragenter", function (evento) {
+
+        evento.preventDefault();
+        evento.stopPropagation();
+
+        profundidadArrastre++;
+
+        zona.classList.add("arrastrando");
+
+    });
+
+
+    // PERMITIMOS SOLTAR LA IMAGEN
+
+    zona.addEventListener("dragover", function (evento) {
+
+        evento.preventDefault();
+        evento.stopPropagation();
+
+        if (evento.dataTransfer) {
+            evento.dataTransfer.dropEffect = imagenArrastrada !== null ? "move" : "copy";
+        }
+
+    });
+
+
+    // RESTAURAMOS EL ESTILO AL SALIR
+
+    zona.addEventListener("dragleave", function (evento) {
+
+        evento.preventDefault();
+        evento.stopPropagation();
+
+        profundidadArrastre = Math.max(0, profundidadArrastre - 1);
+
+        if (profundidadArrastre === 0) {
+            zona.classList.remove("arrastrando");
+        }
+
+    });
+
+
+    // RECIBIMOS LA IMAGEN ARRASTRADA
+
+    zona.addEventListener("drop", function (evento) {
+
+        evento.preventDefault();
+        evento.stopPropagation();
+
+        profundidadArrastre = 0;
+        zona.classList.remove("arrastrando");
+
+
+        // INTERCAMBIAMOS LAS IMAGENES ENTRE RECUADROS
+
+        if (imagenArrastrada !== null) {
+
+            if (imagenArrastrada !== campo) {
+
+                let archivoOrigen = imagenArrastrada.files[0] || null;
+                let archivoDestino = campo.files[0] || null;
+
+                let nuevaListaDestino = new DataTransfer();
+                let nuevaListaOrigen = new DataTransfer();
+
+                if (archivoOrigen) {
+                    nuevaListaDestino.items.add(archivoOrigen);
+                }
+
+                if (archivoDestino) {
+                    nuevaListaOrigen.items.add(archivoDestino);
+                }
+
+                campo.files = nuevaListaDestino.files;
+                imagenArrastrada.files = nuevaListaOrigen.files;
+
+                actualizarVistaImagen(campo);
+                actualizarVistaImagen(imagenArrastrada);
+
+            }
 
             return;
         }
 
-        // MOSTRAR VISTA PREVIA
 
-        let lector = new FileReader();
+        // RECIBIMOS UNA IMAGEN DESDE WINDOWS
 
-        lector.onload = function (evento) {
-            vista.src = evento.target.result;
-            vista.hidden = false;
-            contenedor.classList.add("con-imagen");
-        };
+        let archivos = evento.dataTransfer.files;
 
-        lector.readAsDataURL(archivo);
+        if (archivos.length === 0) {
+            return;
+        }
+
+
+        // PERMITIMOS UNA IMAGEN POR RECUADRO
+
+        if (archivos.length > 1) {
+
+            mostrarErrorImagen("Agregá una imagen por recuadro.");
+            return;
+
+        }
+
+
+        // ASIGNAMOS LA IMAGEN AL INPUT
+
+        let transferencia = new DataTransfer();
+
+        transferencia.items.add(archivos[0]);
+
+        campo.files = transferencia.files;
+
+
+        // ACTUALIZAMOS LA VISTA PREVIA
+
+        actualizarVistaImagen(campo);
 
     });
 
 });
-
 
 // VALIDAR FORMULARIO ANTES DE CREAR CURSO
 
@@ -236,7 +460,7 @@ if (formularioCrearCurso != null) {
         if (opcionCupo === "") {
             mostrarError("TieneCupo", "Seleccioná una opción de cupo.");
         } else if (opcionCupo === "si" &&
-            (!/^[1-9]\d*$/.test(cantidadCupo) || Number(cantidadCupo) > 2147483647)) {
+          (!/^[1-9]\d*$/.test(cantidadCupo) || Number(cantidadCupo) > 2147483647)) {
 
             mostrarError("Cupo", "Ingresá un cupo entero mayor que cero.");
         }
@@ -250,7 +474,7 @@ if (formularioCrearCurso != null) {
         if (tipoCursoSeleccionado === "") {
             mostrarError("TipoCurso", "Seleccioná si el curso es gratuito o pago.");
         } else if (tipoCursoSeleccionado === "pago" &&
-            (!/^\d{1,8}(\.\d{1,2})?$/.test(importe) || Number(importe) <= 0)) {
+          (!/^\d{1,8}(\.\d{1,2})?$/.test(importe) || Number(importe) <= 0)) {
 
             mostrarError("Costo", "Ingresá un importe válido mayor que cero.");
         }
@@ -273,18 +497,16 @@ if (formularioCrearCurso != null) {
         // COMPROBAR IMAGEN PRINCIPAL
 
         let imagenPrincipal = document.getElementById("ImagenPrincipal");
-        let imagenesAdicionales = document.querySelectorAll(".curso-miniatura .imagen-input");
 
-        let hayAdicionales = Array.from(imagenesAdicionales).some(function (campo) {
-            return campo.files.length > 0;
-        });
+        if (imagenPrincipal.files.length === 0) {
 
-        if (hayAdicionales && imagenPrincipal.files.length === 0) {
-
-            errorImagenes.textContent = "Agregá primero una imagen principal.";
+            errorImagenes.textContent = "Agregá una imagen principal para el curso.";
             errorImagenes.hidden = false;
 
-            if (primerCampoInvalido === null) primerCampoInvalido = imagenPrincipal;
+            if (primerCampoInvalido === null) {
+                primerCampoInvalido = imagenPrincipal;
+            }
+
         }
 
 
@@ -348,3 +570,41 @@ if (selectorAcceso != null && iconoAcceso != null) {
     actualizarIconoAcceso();
 
 }
+
+
+// ANIMAMOS EL CONTENIDO AL INGRESAR A CREAR CURSO
+
+window.addEventListener("pageshow", function () {
+
+    let contenido = document.querySelector(".crear-curso-contenido");
+
+    if (contenido == null) {
+        return;
+    }
+
+    contenido.animate([
+
+        {
+            opacity: 0,
+            transform: "translateY(-28px)",
+            offset: 0
+        },
+
+        {
+            opacity: 0.45,
+            offset: 0.45
+        },
+
+        {
+            opacity: 1,
+            transform: "translateY(0)",
+            offset: 1
+        }
+
+    ], {
+        duration: 550,
+        easing: "cubic-bezier(0.22, 0.61, 0.36, 1)",
+        iterations: 1
+    });
+
+});

@@ -74,7 +74,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["crear_curso"])) {
                 throw new DomainException("Seleccioná una opción de cupo válida.");
             }
 
-        
+            // COMPROBAMOS QUE SE HAYA SUBIDO LA IMAGEN PRINCIPAL
+
+            $imagenPrincipal = $_FILES["ImagenPrincipal"] ?? null;
+
+            if (
+                !is_array($imagenPrincipal) ||
+                !isset($imagenPrincipal["error"]) ||
+                $imagenPrincipal["error"] === UPLOAD_ERR_NO_FILE
+            ) {
+                throw new DomainException("Agregá una imagen principal para el curso.");
+            }
+
+            if ($imagenPrincipal["error"] !== UPLOAD_ERR_OK) {
+                throw new DomainException("No se pudo recibir la imagen principal.");
+            }
         
             $curso = new Curso($idUsuario, $Titulo, $Descripcion, $TipoAcceso, $TipoCurso,
                 $Costo, $Cupo, $FechaInicio, $FechaFin, $Etiquetas);
@@ -120,7 +134,7 @@ function escapar($texto) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/menu_lateral.css">
     <link rel="stylesheet" href="css/notificaciones_rapidas.css">
-    <link rel="stylesheet" href="css/crear_curso.css?v=5">
+    <link rel="stylesheet" href="css/crear_curso.css?v=9">
 </head>
 <body>
 
@@ -129,9 +143,15 @@ function escapar($texto) {
 
     <main class="contenido-con-menu container py-5 crear-curso-pagina">
 
-        <h1>Crear curso</h1>
-        <p>Completá la información principal de tu curso.</p>
+    <!-- ANIMAMOS EL CONTENIDO DE CREAR CURSO -->
 
+    <div class="crear-curso-contenido">
+
+        <!-- ENCABEZADO DE CREAR CURSO -->
+         <div class="crear-curso-encabezado">
+            <h1>Crear curso</h1>
+            <p>Completá la información principal de tu curso.</p>
+        </div>
         <?php if ($cursoCreado != null): ?>
             <div class="alert alert-success">Curso creado correctamente. ID: <strong><?php echo (int) $cursoCreado; ?></strong>.</div>
         <?php endif; ?>
@@ -160,16 +180,28 @@ function escapar($texto) {
 
                     <!-- IMAGEN PRINCIPAL -->
 
-                    <label class="curso-imagen-principal">
+                    <div class="imagen-contenedor-principal">
 
-                        <input type="file" id="ImagenPrincipal" name="ImagenPrincipal" class="imagen-input" accept=".jpg,.jpeg,.png,.webp">
+                        <label class="curso-imagen-principal">
 
-                        <img class="imagen-preview" alt="Vista previa de la imagen principal" hidden>
+                            <input type="file" id="ImagenPrincipal" name="ImagenPrincipal"
+                                class="imagen-input" accept=".jpg,.jpeg,.png,.webp" required>
 
-                        <img src="imagenes/curso/agregar_imagen.svg" class="imagen-simbolo" alt="">
-                        <span class="imagen-texto">Agregar imagen</span>
+                            <img class="imagen-preview" alt="Vista previa de la imagen principal"
+                                draggable="false" hidden>
 
-                    </label>
+                            <img src="imagenes/curso/agregar_imagen.svg"
+                                class="imagen-simbolo" alt="">
+
+                            <span class="imagen-texto">Agregar imagen</span>
+                            <span class="imagen-ayuda">O arrastrá una imagen aquí</span>
+
+                        </label>
+
+                        <button type="button" class="imagen-quitar"
+                            aria-label="Quitar imagen principal" hidden>×</button>
+
+                    </div>
 
 
                     <!-- MINIATURAS -->
@@ -178,15 +210,24 @@ function escapar($texto) {
 
                         <?php for ($i = 1; $i <= 5; $i++): ?>
 
-                            <label class="curso-miniatura">
+                            <div class="imagen-contenedor-miniatura">
 
-                                <input type="file" name="ImagenesExtra[]" class="imagen-input" accept=".jpg,.jpeg,.png,.webp">
+                                <label class="curso-miniatura">
 
-                                <img class="imagen-preview" alt="Vista previa de la imagen" hidden>
+                                    <input type="file" name="ImagenesExtra[]"
+                                        class="imagen-input" accept=".jpg,.jpeg,.png,.webp">
 
-                                <span class="miniatura-simbolo">+</span>
+                                    <img class="imagen-preview" alt="Vista previa de la imagen"
+                                        draggable="false" hidden>
 
-                            </label>
+                                    <span class="miniatura-simbolo">+</span>
+
+                                </label>
+
+                                <button type="button" class="imagen-quitar"
+                                    aria-label="Quitar miniatura <?php echo $i; ?>" hidden>×</button>
+
+                            </div>
 
                         <?php endfor; ?>
 
@@ -343,11 +384,13 @@ function escapar($texto) {
                 <button type="submit" name="crear_curso" value="1" class="btn btn-primary">Crear curso</button>
             </div>
 
-        </form>
+         </form>
+
+        </div>
     </main>
 
     <script src="js/menu_lateral.js"></script>
     <script src="js/notificaciones_rapidas.js"></script>
-    <script src="js/crear_curso.js?v=6"></script>
+    <script src="js/crear_curso.js?v=10"></script>
 </body>
 </html>

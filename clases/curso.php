@@ -308,13 +308,18 @@ class Curso {
     
     // OBTENEMOS CURSOS DISPONIBLES PARA INICIO
 
-    public static function obtenerCursosParaInicio() {
+    
+      public static function obtenerCursosParaInicio($busqueda = "", $idEtiqueta = 0) {
 
         $conexion = self::conectar();
 
         try {
 
             $hoy = (new DateTimeImmutable("today", new DateTimeZone("America/Argentina/San_Luis")))->format("Y-m-d");
+
+            $busqueda = trim((string) $busqueda);
+            $idEtiqueta = (int) $idEtiqueta;
+            $patron = "%" . $busqueda . "%";
 
             $sql = "SELECT
                         c.idCurso,
@@ -334,11 +339,44 @@ class Curso {
 
                     WHERE c.FechaFin >= ?
 
+                    AND (
+                        ? = ''
+                        OR c.Titulo LIKE ?
+                        OR EXISTS (
+                            SELECT 1
+                            FROM cursointeres AS ce
+                            INNER JOIN interes AS i
+                                ON ce.idInteres = i.idInteres
+                            WHERE ce.idCurso = c.idCurso
+                            AND i.NombreInteres LIKE ?
+                        )
+                    )
+
+                    AND (
+                        ? = 0
+                        OR EXISTS (
+                            SELECT 1
+                            FROM cursointeres AS cf
+                            WHERE cf.idCurso = c.idCurso
+                            AND cf.idInteres = ?
+                        )
+                    )
+
                     ORDER BY c.idCurso DESC";
 
             $consulta = mysqli_prepare($conexion, $sql);
 
-            mysqli_stmt_bind_param($consulta, "s", $hoy);
+            mysqli_stmt_bind_param(
+                $consulta,
+                "ssssii",
+                $hoy,
+                $busqueda,
+                $patron,
+                $patron,
+                $idEtiqueta,
+                $idEtiqueta
+            );
+
             mysqli_stmt_execute($consulta);
 
             $resultado = mysqli_stmt_get_result($consulta);
@@ -353,6 +391,7 @@ class Curso {
             mysqli_close($conexion);
 
         }
+        
     }
     // CREAR Y GUARDAR CURSO
 
@@ -429,4 +468,119 @@ class Curso {
             mysqli_close($conexion);
         }
     }
+
+        // OBTENEMOS LOS CURSOS CREADOS POR UN USUARIO
+
+        public static function obtenerCursosCreadosPorUsuario($idUsuario) {
+
+            $conexion = self::conectar();
+
+            try {
+
+                $sql = "SELECT c.idCurso, c.Titulo, c.TipoAcceso, c.TipoCurso,
+                            c.FechaInicio, c.FechaFin,
+                            ci.Ruta AS ImagenPrincipal
+                        FROM curso AS c
+                        LEFT JOIN cursoimagen AS ci
+                            ON ci.idCurso = c.idCurso AND ci.Orden = 0
+                        WHERE c.idUsuario = ?
+                        ORDER BY c.idCurso DESC";
+
+                $consulta = mysqli_prepare($conexion, $sql);
+                mysqli_stmt_bind_param($consulta, "i", $idUsuario);
+                mysqli_stmt_execute($consulta);
+
+                $resultado = mysqli_stmt_get_result($consulta);
+                $cursos = mysqli_fetch_all($resultado, MYSQLI_ASSOC);
+
+                mysqli_stmt_close($consulta);
+
+                return $cursos;
+
+            } finally {
+
+                mysqli_close($conexion);
+
+            }
+        }
+
+
+        // OBTENEMOS LOS CURSOS SEGUN EL ESTADO DE INSCRIPCION
+
+        public static function obtenerCursosPorEstadoInscripcion($idUsuario, $estado) {
+
+            if (!in_array($estado, ["confirmada", "pendiente"], true)) {
+                throw new DomainException("Estado de inscripción inválido.");
+            }
+
+            $conexion = self::conectar();
+
+            try {
+
+                $sql = "SELECT c.idCurso, c.Titulo, c.TipoCurso, c.TipoAcceso,
+                            c.FechaInicio, c.FechaFin,
+                            ci.Ruta AS ImagenPrincipal,
+                            i.Estado, i.FechaInscripcion
+                        FROM inscripcion AS i
+                        INNER JOIN curso AS c ON c.idCurso = i.idCurso
+                        LEFT JOIN cursoimagen AS ci
+                            ON ci.idCurso = c.idCurso AND ci.Orden = 0
+                        WHERE i.idUsuario = ? AND i.Estado = ?
+                        AND c.idUsuario <> i.idUsuario
+                        ORDER BY i.FechaInscripcion DESC, i.idInscripcion DESC";
+
+                $consulta = mysqli_prepare($conexion, $sql);
+                mysqli_stmt_bind_param($consulta, "is", $idUsuario, $estado);
+                mysqli_stmt_execute($consulta);
+
+                $resultado = mysqli_stmt_get_result($consulta);
+                $cursos = mysqli_fetch_all($resultado, MYSQLI_ASSOC);
+
+                mysqli_stmt_close($consulta);
+
+                return $cursos;
+
+            } finally {
+                mysqli_close($conexion);
+            }
+        }
+
+
+        // COMPROBAMOS SI EL USUARIO TIENE PLAN PRO VIGENTE
+
+        public static function usuarioTienePlanProVigente($idUsuario) {
+
+            $conexion = self::conectar();
+
+            try {
+
+                $sql = "SELECT PlanTipo, FechaVencimiento
+                        FROM usuario
+                        WHERE idUsuario = ?";
+
+                $consulta = mysqli_prepare($conexion, $sql);
+                mysqli_stmt_bind_param($consulta, "i", $idUsuario);
+                mysqli_stmt_execute($consulta);
+
+                $resultado = mysqli_stmt_get_result($consulta);
+                $usuario = mysqli_fetch_assoc($resultado);
+
+                mysqli_stmt_close($consulta);
+
+                $hoy = (new DateTimeImmutable(
+                    "today",
+                    new DateTimeZone("America/Argentina/San_Luis")
+                ))->format("Y-m-d");
+
+                return $usuario !== null
+                    && $usuario["PlanTipo"] === "pro"
+                    && !empty($usuario["FechaVencimiento"])
+                    && substr($usuario["FechaVencimiento"], 0, 10) >= $hoy;
+
+            } finally {
+                mysqli_close($conexion);
+            }
+        }
+
+
 }
