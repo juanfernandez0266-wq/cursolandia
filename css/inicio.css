@@ -260,3 +260,18 @@ body {
         flex-direction: column;
     }
 }
+
+
+/* IMAGENES REALES DE LOS CURSOS */
+
+.curso-imagen.con-imagen {
+    padding: 0;
+    overflow: hidden;
+}
+
+.curso-imagen.con-imagen img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

@@ -16,7 +16,7 @@ if (!isset($_SESSION["idUsuario"])) {
 $idUsuario = (int) $_SESSION["idUsuario"];
 
 // MODO DE PRUEBA PARA VISUALIZAR EL FORMULARIO
-$modoPrueba = false;
+$modoPrueba = true;
 
 // TOKEN DE SEGURIDAD
 
