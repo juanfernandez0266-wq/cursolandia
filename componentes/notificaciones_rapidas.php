@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../clases/notificacion.php";
+require_once __DIR__ . "/../clases/curso.php";
 
 ?>
 
@@ -54,6 +55,21 @@ require_once __DIR__ . "/../clases/notificacion.php";
             $idUsuarioNotificacion,
             20
         );
+
+        // OBTENEMOS LOS AVISOS DE INSCRIPCION
+
+        $avisosInscripcion = Curso::obtenerAvisosInscripcionCurso(
+            $idUsuarioNotificacion
+        );
+
+        // EVITAMOS DUPLICAR LAS NOTIFICACIONES DE INSCRIPCION
+
+        $notificacionesRapidas = array_values(array_filter(
+            $notificacionesRapidas,
+            function ($notificacion) {
+                return !in_array((int)$notificacion["Estado"], [8, 9, 10,11], true);
+            }
+        ));
 
 
         // SEPARAR NOTIFICACIONES POR TIEMPO
@@ -127,7 +143,7 @@ require_once __DIR__ . "/../clases/notificacion.php";
 
             // SI NO HAY NOTIFICACIONES
 
-            if (count($notificacionesRapidas) == 0) {
+            if (count($notificacionesRapidas) == 0 && count($avisosInscripcion) == 0) {
 
                 echo '<p class="panel-sin-notificaciones">No hay notificaciones.</p>';
 
@@ -239,14 +255,18 @@ require_once __DIR__ . "/../clases/notificacion.php";
 
                 }
 
-                ?>
-
+                                ?>
 
             <?php
 
             }
 
             ?>
+
+
+            <!-- MOSTRAMOS LAS NOTIFICACIONES DE INSCRIPCION -->
+
+            <?php include __DIR__ . "/notificaciones_inscripcion.php"; ?>
 
 
         </div>

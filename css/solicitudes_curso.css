@@ -1,0 +1,189 @@
+
+/* ORGANIZAMOS LAS SOLICITUDES DEL CURSO */
+
+.curso-solicitudes-contenido {
+    margin-top: 30px;
+}
+
+.curso-solicitudes-contenido h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px;
+    color: #17213c;
+    font-size: 19px;
+    font-weight: 600;
+}
+
+.curso-solicitudes-numero {
+    font-size: 13px;
+    color: #718095;
+    font-weight: 500;
+}
+
+.curso-solicitudes-vacio {
+    color: #778397;
+    font-size: 14px;
+    margin-top: 18px;
+}
+
+
+/* MOSTRAMOS CADA PERSONA QUE SOLICITO INGRESAR */
+
+.curso-solicitud-fila {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 0;
+}
+
+.curso-solicitud-fila + .curso-solicitud-fila {
+    border-top: 1px solid #e8ebef;
+}
+
+.curso-solicitud-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #eef2f7;
+    color: #53647a;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.curso-solicitud-avatar .curso-icono {
+    width: 23px;
+    height: 23px;
+}
+
+.curso-solicitud-persona {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.curso-solicitud-persona strong {
+    font-size: 15px;
+    font-weight: 600;
+    color: #17213c;
+}
+
+.curso-solicitud-persona span {
+    font-size: 12px;
+    color: #778397;
+}
+
+
+/* AGREGAMOS LOS BOTONES DE APROBACION Y RECHAZO */
+
+.curso-solicitud-acciones {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.curso-solicitud-acciones form {
+    margin: 0;
+}
+
+.curso-solicitud-aprobar,
+.curso-solicitud-confirmar-rechazo {
+    padding: 10px 17px;
+    border: 0;
+    border-radius: 9px;
+    background: #0d6efd;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
+/* MOSTRAMOS EL FORMULARIO DE RECHAZO */
+
+.curso-solicitud-rechazo {
+    position: relative;
+}
+
+.curso-solicitud-rechazo summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 16px;
+    border: 1px solid #d7dee9;
+    border-radius: 9px;
+    background: #fff;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+}
+
+.curso-solicitud-rechazo summary::-webkit-details-marker {
+    display: none;
+}
+
+.curso-solicitud-rechazo[open] {
+    width: min(340px, 80vw);
+}
+
+.curso-solicitud-rechazo form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.curso-solicitud-rechazo label {
+    font-size: 12px;
+    color: #526174;
+}
+
+.curso-solicitud-rechazo textarea {
+    padding: 12px;
+    max-width: 100%;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+    resize: vertical;
+}
+
+.curso-solicitud-confirmar-rechazo {
+    background: #b42318;
+}
+
+.curso-solicitud-rechazo summary:hover {
+    background: #f0f5fb;
+}
+
+
+/* ADAPTAMOS LAS SOLICITUDES A PANTALLAS PEQUEÑAS */
+
+@media (max-width: 760px) {
+
+    .curso-solicitud-fila {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .curso-solicitud-acciones {
+        width: 100%;
+        padding-left: 60px;
+    }
+
+    .curso-solicitud-rechazo[open] {
+        width: 100%;
+    }
+}

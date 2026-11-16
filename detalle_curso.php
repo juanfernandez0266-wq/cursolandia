@@ -188,7 +188,7 @@ $imagenPrincipal = $curso["Imagenes"][0]["Ruta"] ?? "";
                     <div class="detalle-curso-inscripcion">
 
                         <?php if ($esCreador): ?>
-
+                        <a href="curso.php?idCurso=<?php echo (int)$idCurso; ?>" class="btn btn-primary mt-3">Administrar curso</a>
                         <!-- INFORMAMOS QUE EL USUARIO ES EL CREADOR -->
 
                         <div class="detalle-curso-aviso aviso-propio">

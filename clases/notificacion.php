@@ -281,9 +281,15 @@ class Notificacion {
             return "El docente eliminó tu pregunta:";
         }
 
+        if ($estado == 12) {
+            return $nombreActor . " destacó tu pregunta:";
+        }
 
         return "Nueva notificación";
-    }
+
+
+                return "Nueva notificación";
+            }
 
 
 

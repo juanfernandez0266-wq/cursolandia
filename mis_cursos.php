@@ -200,7 +200,7 @@ foreach ($cursosInscritos as $curso) {
 
                                 <!-- ADMINISTRACION DEL CURSO -->
 
-                                <span class="mis-cursos-accion">Administrar</span>
+                                <a href="curso.php?idCurso=<?php echo (int)$curso["idCurso"]; ?>" class="mis-cursos-accion">Administrar</a>
 
                             </article>
 
@@ -270,7 +270,7 @@ foreach ($cursosInscritos as $curso) {
                                     <span class="mis-cursos-estado">Acceso habilitado</span>
                                 </div>
 
-                                <span class="mis-cursos-accion">Entrar al curso</span>
+                                <a href="curso.php?idCurso=<?php echo (int)$curso["idCurso"]; ?>" class="mis-cursos-accion">Entrar al curso</a>
 
                             </article>
 
