@@ -4,7 +4,7 @@
 session_start();
 
 require_once __DIR__ . "/clases/solicitudplanpro.php";
-
+require_once __DIR__ . "/clases/usuario.php";
 
 // COMPROBAR SESION
 
@@ -14,9 +14,14 @@ if (!isset($_SESSION["idUsuario"])) {
 }
 
 $idUsuario = (int) $_SESSION["idUsuario"];
+// COMPROBAMOS SI EL USUARIO YA TIENE UN PLAN PRO VIGENTE
 
-// MODO DE PRUEBA PARA VISUALIZAR EL FORMULARIO
-$modoPrueba = true;
+$usuarioPlan = Usuario::buscarPorId($idUsuario);
+$planProVigente = $usuarioPlan && $usuarioPlan->esPlanPro();
+
+// DESACTIVAMOS EL MODO DE PRUEBA PARA UTILIZAR LAS SOLICITUDES REALES
+
+$modoPrueba = false;
 
 // TOKEN DE SEGURIDAD
 
@@ -43,11 +48,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["confirmar_solicitud"])
 
     $Mensaje = trim($_POST["Mensaje"] ?? "");
 
-    if (!hash_equals($_SESSION["token_plan_pro"], $_POST["token_plan_pro"] ?? "")) {
+    if ($planProVigente) {
 
-        $error = "La solicitud no pudo verificarse. Recargá la página.";
+    $error = "Ya tenés un Plan Pro activo. No necesitás realizar otra solicitud.";
 
-    } elseif ($hayPendiente) {
+    } elseif (!hash_equals($_SESSION["token_plan_pro"], $_POST["token_plan_pro"] ?? "")) {
 
         $error = "Ya tenés una solicitud de Plan Pro pendiente.";
 
@@ -96,7 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["confirmar_solicitud"])
 
             // CARPETA FUERA DE HTDOCS
 
-            $carpeta = dirname(__DIR__, 2) . "/cursolandia_comprobantes";
+            $carpeta = dirname(realpath($_SERVER["DOCUMENT_ROOT"])) . "/cursolandia_comprobantes";
 
             if (!is_dir($carpeta) && !mkdir($carpeta, 0700, true)) {
 
@@ -185,8 +190,8 @@ $paginaActual = basename($_SERVER["PHP_SELF"]);
     <title>Solicitar Plan Pro - Cursolandia</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/menu_lateral.css">
-    <link rel="stylesheet" href="css/solicitar_plan_pro.css?v=3">
+    <link rel="stylesheet" href="css/menu_lateral.css?v=5">
+    <link rel="stylesheet" href="css/solicitar_plan_pro.css?v=4">
 </head>
 
 <body>
@@ -196,7 +201,31 @@ $paginaActual = basename($_SERVER["PHP_SELF"]);
     <main class="container py-5 pagina-solicitud-pro">
 
         
-        <?php if ($solicitudActual != null && !$modoPrueba): ?>
+        
+            <?php if ($planProVigente): ?>
+
+                <!-- MOSTRAMOS EL PLAN ACTIVO EN LUGAR DE PERMITIR OTRA SOLICITUD -->
+
+                <h1>Plan Pro activo</h1>
+
+                <div class="plan-pro-activo">
+                    <h2>Tu Plan Pro ya se encuentra activo</h2>
+
+                    <p>
+                        Podés disfrutar de los beneficios de Cursolandia Pro
+                        hasta el
+                        <strong>
+                            <?php echo date("d/m/Y", strtotime($usuarioPlan->FechaVencimiento)); ?>
+                        </strong>.
+                    </p>
+
+                    <a href="perfil.php" class="btn btn-primary">
+                        Volver a mi perfil
+                    </a>
+                </div>
+
+            <?php elseif ($solicitudActual != null && !$modoPrueba): ?>
+
 
             <!-- SOLICITUD REGISTRADA -->
 

@@ -77,8 +77,8 @@ class Usuario {
         if ($email == "") {
             $errores["email"] = "Debe ingresar un correo electrónico.";
         }
-        elseif (!preg_match("/^[a-zA-Z0-9._]+@gmail\.com$/", $email)) {
-            $errores["email"] = "El correo debe tener el formato usuario@gmail.com.";
+        elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errores["email"] = "Ingresá un correo electrónico válido.";
         }
 
 
@@ -951,12 +951,14 @@ class Usuario {
 
 
     public function esPlanPro() {
-
+         return strtolower(trim((string)$this->PlanTipo)) === "pro"
+        && !empty($this->FechaVencimiento)
+        && substr($this->FechaVencimiento, 0, 10) >= date("Y-m-d");   
     }
 
 
     public function esAdministrador() {
-
+        return $this->Rol_Usuario === "administrador";
     }
 
 

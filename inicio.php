@@ -58,7 +58,7 @@ try {
     <link rel="stylesheet" href="css/inicio.css?v=5">
 
     <!-- CSS MENU LATERAL -->
-     <link rel="stylesheet" href="css/menu_lateral.css?v=2">
+     <link rel="stylesheet" href="css/menu_lateral.css?v=5">
 
      <!-- CSS NOTIFICACIONES RAPIDAS -->
     <link rel="stylesheet" href="css/notificaciones_rapidas.css">

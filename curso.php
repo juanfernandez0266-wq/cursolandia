@@ -741,7 +741,7 @@ if (
     <title><?php echo $accesoPermitido ? escaparCurso($curso["Titulo"]) : "Acceso al curso"; ?> - Cursolandia</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/menu_lateral.css">
+    <link rel="stylesheet" href="css/menu_lateral.css?v=5">
     <link rel="stylesheet" href="css/notificaciones_rapidas.css">
     <link rel="stylesheet" href="css/curso_interno.css?v=11">
     <link rel="stylesheet" href="css/solicitudes_curso.css?v=2">

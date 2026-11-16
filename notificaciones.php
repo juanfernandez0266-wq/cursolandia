@@ -98,7 +98,7 @@ if (isset($_POST["guardar_configuracion"])) {
 
     <!-- CSS MENU LATERAL -->
 
-    <link rel="stylesheet" href="css/menu_lateral.css?v=2">
+    <link rel="stylesheet" href="css/menu_lateral.css?v=5">
 
 
     <!-- CSS NOTIFICACIONES RAPIDAS -->

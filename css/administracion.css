@@ -1,0 +1,367 @@
+
+/* ORGANIZAMOS EL CONTENIDO DE ADMINISTRACION */
+
+.admin-pagina {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 36px 40px 70px;
+}
+
+.admin-pagina .admin-panel {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 940px;
+    min-width: 0;
+    margin: 0 auto 60px !important;
+    padding: 42px !important;
+}
+
+
+/* SEPARAMOS LOS TITULOS DEL CONTENIDO */
+
+.admin-subtitulo {
+    margin: 34px 0 22px;
+    color: #17213c;
+    font-size: 23px;
+    font-weight: 600;
+}
+
+
+/* DISEÑAMOS LAS TARJETAS DE SOLICITUDES */
+
+.admin-solicitud {
+    margin-bottom: 18px;
+    border: 1px solid #dfe5ed;
+    border-radius: 14px;
+    background-color: #ffffff;
+    box-shadow: 0 3px 14px rgba(23, 33, 60, 0.04);
+    overflow: hidden;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-solicitud:hover {
+    border-color: #b9cbe2;
+    box-shadow: 0 6px 20px rgba(23, 33, 60, 0.07);
+}
+
+.admin-solicitud-resumen {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 25px;
+    cursor: pointer;
+    list-style: none;
+    transition: background-color 0.25s ease;
+}
+
+.admin-solicitud-resumen:hover,
+.admin-solicitud[open] > .admin-solicitud-resumen {
+    background-color: #f7faff;
+}
+
+.admin-solicitud-resumen::-webkit-details-marker,
+.admin-historial > summary::-webkit-details-marker {
+    display: none;
+}
+
+.admin-solicitud-resumen::marker,
+.admin-historial > summary::marker {
+    content: "";
+}
+
+
+/* MOSTRAMOS LOS DATOS DEL SOLICITANTE */
+
+.admin-solicitud-usuario {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.admin-solicitud-usuario strong {
+    color: #17213c;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.admin-solicitud-usuario small {
+    color: #758093;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.admin-solicitud-estado {
+    padding: 7px 13px;
+    border-radius: 20px;
+    background-color: #fff5dc;
+    color: #8c681a;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+
+/* AGREGAMOS LA FLECHA DE CADA SOLICITUD */
+
+.admin-solicitud-resumen::after,
+.admin-historial > summary::after {
+    content: "";
+    display: block;
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    border-right: 2px solid #4775b2;
+    border-bottom: 2px solid #4775b2;
+    transform: rotate(45deg);
+    transition: transform 0.25s ease;
+}
+
+.admin-solicitud[open] > summary::after,
+.admin-historial[open] > summary::after {
+    transform: rotate(225deg);
+}
+
+
+/* MOSTRAMOS LOS DETALLES AL ABRIR LA SOLICITUD */
+
+.admin-solicitud-contenido {
+    padding: 26px;
+    border-top: 1px solid #e8edf4;
+    animation: admin-entrada 0.3s ease;
+}
+
+@keyframes admin-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ORGANIZAMOS EL ACCESO AL COMPROBANTE */
+
+.admin-enlace-comprobante {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 12px 15px;
+    border: 1px solid #e0e8f3;
+    border-radius: 12px;
+    background-color: #f8faff;
+    color: #0d6efd;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    transition: background-color 0.25s ease;
+}
+
+.admin-enlace-comprobante:hover {
+    background-color: #edf4ff;
+}
+
+.admin-enlace-comprobante span:last-child {
+    margin-left: auto;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* SEPARAMOS LOS FORMULARIOS DE APROBACION Y RECHAZO */
+
+.admin-formulario {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #e8edf4;
+}
+
+.admin-formulario .form-label {
+    display: block;
+    margin-bottom: 12px;
+}
+
+.admin-formulario select {
+    max-width: 340px;
+}
+
+.admin-formulario .btn {
+    display: block;
+    margin-top: 20px;
+}
+
+.admin-formulario-rechazo {
+    margin-top: 30px;
+}
+
+.admin-formulario-rechazo .btn {
+    min-height: 52px;
+    padding: 12px 28px;
+    border-radius: 26px;
+}
+
+
+/* MOSTRAMOS LOS ESTADOS SIN CONTENIDO */
+
+.admin-vacio {
+    padding: 26px;
+    border: 1px solid #e4eaf1;
+    border-radius: 12px;
+    background-color: #f7f9fc;
+    color: #667085;
+    font-size: 15px;
+}
+
+
+/* SEPARAMOS EL HISTORIAL DE LAS SOLICITUDES PENDIENTES */
+
+.admin-historial {
+    margin-top: 44px;
+    border: 1px solid #dfe5ed;
+    border-radius: 14px;
+    background-color: #ffffff;
+    box-shadow: 0 3px 14px rgba(23, 33, 60, 0.04);
+    overflow: hidden;
+}
+
+
+/* DISEÑAMOS EL BOTON DESPLEGABLE DEL HISTORIAL */
+
+.admin-historial > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 23px 25px;
+    background-color: #f7f9fc;
+    color: #17213c;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    transition: background-color 0.25s ease;
+}
+
+.admin-historial > summary:hover {
+    background-color: #eaf3ff;
+}
+
+.admin-historial[open] > summary {
+    border-bottom: 1px solid #e8edf4;
+}
+
+
+/* ORGANIZAMOS LAS SOLICITUDES DEL HISTORIAL */
+
+.admin-historial-registro {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 24px 26px;
+    border-bottom: 1px solid #e8edf4;
+}
+
+.admin-historial-registro:last-child {
+    border-bottom: none;
+}
+
+.admin-historial-registro strong {
+    color: #17213c;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.admin-historial-registro p {
+    margin: 7px 0;
+    color: #667085;
+    font-size: 14px;
+}
+
+
+/* DISEÑAMOS EL BOTON PARA VER COMPROBANTES */
+
+.admin-historial-registro > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 10px 17px;
+    border: 1px solid #d5e5fa;
+    border-radius: 24px;
+    color: #0d6efd;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.25s ease;
+}
+
+.admin-historial-registro > a:hover {
+    background-color: #eaf3ff;
+}
+
+
+/* ADAPTAMOS EL DISEÑO A PANTALLAS PEQUEÑAS */
+
+@media (max-width: 768px) {
+    .admin-pagina {
+        padding: 18px 12px 45px;
+    }
+
+    .admin-pagina .admin-panel {
+        padding: 24px 20px !important;
+    }
+
+    .admin-solicitud-resumen,
+    .admin-historial > summary {
+        padding: 19px;
+    }
+
+    .admin-solicitud-contenido {
+        padding: 20px;
+    }
+
+    .admin-historial-registro {
+        flex-direction: column;
+        gap: 14px;
+        padding: 20px;
+    }
+
+    .admin-solicitud-estado {
+        font-size: 12px;
+    }
+
+    .admin-formulario select {
+        max-width: 100%;
+    }
+}
+
+
+/* RESPETAMOS LA PREFERENCIA DE MOVIMIENTO REDUCIDO */
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-solicitud,
+    .admin-solicitud-resumen,
+    .admin-solicitud-contenido,
+    .admin-enlace-comprobante,
+    .admin-historial > summary,
+    .admin-historial-registro > a {
+        transition: none;
+        animation: none;
+    }
+
+    .admin-solicitud-resumen::after,
+    .admin-historial > summary::after {
+        transition: none;
+    }
+}

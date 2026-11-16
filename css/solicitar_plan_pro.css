@@ -609,3 +609,27 @@ body {
         width: 100%;
     }
 }
+
+
+/* MOSTRAMOS LA INFORMACION DEL PLAN PRO ACTIVO */
+
+.plan-pro-activo {
+    padding: 30px;
+    border: 1px solid #dfe5ed;
+    border-radius: 14px;
+    background-color: #f7f9fc;
+}
+
+.plan-pro-activo h2 {
+    margin-bottom: 15px;
+    color: #17213c;
+    font-size: 23px;
+    font-weight: 600;
+}
+
+.plan-pro-activo p {
+    margin-bottom: 25px;
+    color: #666666;
+    font-size: 16px;
+    line-height: 1.6;
+}

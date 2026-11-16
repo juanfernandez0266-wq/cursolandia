@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="200" viewBox="0 0 720 200" role="img" aria-labelledby="title">
+  <title id="title">Cursolandia</title>
+  <g stroke="#ffb900" stroke-width="10" stroke-linecap="round" fill="none">
+    <path d="M93 16v18M55 30l12 12M131 30l-12 12"/>
+  </g>
+  <path d="M93 45c-35 0-63 27-63 61 0 26 19 46 36 62l22 21a7 7 0 0 0 10 0l22-21c17-16 36-36 36-62 0-34-28-61-63-61Z" fill="#075ce6"/>
+  <path d="M48 87c17-5 31-1 45 11 14-12 28-16 45-11v48c-17-3-31 1-45 13-14-12-28-16-45-13Z" fill="#fff" stroke="#061a45" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M93 98v50M48 135c17-3 31 1 45 13 14-12 28-16 45-13" fill="none" stroke="#061a45" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="174" y="137" fill="#061a45" font-family="Arial, sans-serif" font-size="86" font-weight="700" letter-spacing="-3">Cursolandia</text>
+</svg>

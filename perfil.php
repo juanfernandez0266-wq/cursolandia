@@ -222,7 +222,7 @@ if (
 
     <!-- CSS MENU LATERAL -->
 
-    <link rel="stylesheet" href="css/menu_lateral.css?v=2">
+    <link rel="stylesheet" href="css/menu_lateral.css?v=5">
 
     <!-- CSS NOTIFICACIONES RAPIDAS -->
     <link rel="stylesheet" href="css/notificaciones_rapidas.css">
@@ -717,7 +717,7 @@ if (
 
                                 <div class="plan-perfil-resumen">
 
-                                    <?php if ($tipoPlan == "pro"): ?>
+                                    <?php if ($planProVigente): ?>
 
                                         <h3 class="plan-titulo">Plan Pro</h3>
                                         <p>Estás utilizando el Plan Pro de Cursolandia.</p>
