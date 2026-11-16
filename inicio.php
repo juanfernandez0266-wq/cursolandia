@@ -232,9 +232,7 @@ try {
 
                                         <!-- EL DETALLE DEL CURSO SE IMPLEMENTARA DESPUES -->
 
-                                        <a href="#" class="btn btn-outline-primary" onclick="return false;">
-                                            Ver curso
-                                        </a>
+                                        <a href="detalle_curso.php?idCurso=<?php echo (int)$curso['idCurso']; ?>" class="btn btn-outline-primary">Ver curso</a>
 
                                     </div>
 

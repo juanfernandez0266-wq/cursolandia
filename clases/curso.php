@@ -582,5 +582,281 @@ class Curso {
             }
         }
 
+// OBTENEMOS EL DETALLE Y LAS IMAGENES DEL CURSO
 
+public static function obtenerDetalleCurso($idCurso) {
+
+    $conexion = self::conectar();
+
+    try {
+        $sql = "SELECT idCurso, idUsuario, Titulo, Descripcion, TipoAcceso,
+                       TipoCurso, Costo, Cupo, FechaInicio, FechaFin
+                FROM curso WHERE idCurso = ?";
+
+        $consulta = mysqli_prepare($conexion, $sql);
+        mysqli_stmt_bind_param($consulta, "i", $idCurso);
+        mysqli_stmt_execute($consulta);
+        $curso = mysqli_fetch_assoc(mysqli_stmt_get_result($consulta));
+        mysqli_stmt_close($consulta);
+
+        if (!$curso) return null;
+
+        $sql = "SELECT Ruta FROM cursoimagen WHERE idCurso = ? ORDER BY Orden ASC";
+        $consulta = mysqli_prepare($conexion, $sql);
+        mysqli_stmt_bind_param($consulta, "i", $idCurso);
+        mysqli_stmt_execute($consulta);
+        $curso["Imagenes"] = mysqli_fetch_all(mysqli_stmt_get_result($consulta), MYSQLI_ASSOC);
+        mysqli_stmt_close($consulta);
+
+        return $curso;
+
+    } finally {
+        mysqli_close($conexion);
+    }
+}
+
+// COMPROBAMOS SI EL USUARIO YA TIENE UNA INSCRIPCION
+
+public static function obtenerEstadoInscripcion($idUsuario, $idCurso) {
+
+    $conexion = self::conectar();
+
+    try {
+        $sql = "SELECT Estado FROM inscripcion WHERE idUsuario = ? AND idCurso = ?";
+
+        $consulta = mysqli_prepare($conexion, $sql);
+        mysqli_stmt_bind_param($consulta, "ii", $idUsuario, $idCurso);
+        mysqli_stmt_execute($consulta);
+        $registro = mysqli_fetch_assoc(mysqli_stmt_get_result($consulta));
+        mysqli_stmt_close($consulta);
+
+        return $registro["Estado"] ?? null;
+
+    } finally {
+        mysqli_close($conexion);
+    }
+}
+
+
+// INSCRIBIMOS AL USUARIO EN UN CURSO PUBLICO Y GRATUITO
+
+public static function inscribirEnCursoGratuito($idUsuario, $idCurso) {
+
+    $conexion = self::conectar();
+    $hoy = (new DateTimeImmutable("today", new DateTimeZone("America/Argentina/San_Luis")))->format("Y-m-d");
+
+    mysqli_begin_transaction($conexion);
+
+    try {
+
+        // BLOQUEAMOS EL USUARIO MIENTRAS VALIDAMOS SU LIMITE
+
+        $consulta = mysqli_prepare($conexion, "SELECT PlanTipo, FechaVencimiento FROM usuario WHERE idUsuario = ? FOR UPDATE");
+        mysqli_stmt_bind_param($consulta, "i", $idUsuario);
+        mysqli_stmt_execute($consulta);
+        $usuario = mysqli_fetch_assoc(mysqli_stmt_get_result($consulta));
+        mysqli_stmt_close($consulta);
+
+        if (!$usuario) throw new DomainException("No encontramos tu cuenta.");
+
+        // BLOQUEAMOS EL CURSO PARA CONTROLAR EL CUPO
+
+        $consulta = mysqli_prepare($conexion, "SELECT idUsuario, TipoCurso, TipoAcceso, Cupo, FechaInicio, FechaFin FROM curso WHERE idCurso = ? FOR UPDATE");
+        mysqli_stmt_bind_param($consulta, "i", $idCurso);
+        mysqli_stmt_execute($consulta);
+        $curso = mysqli_fetch_assoc(mysqli_stmt_get_result($consulta));
+        mysqli_stmt_close($consulta);
+
+        if (!$curso) throw new DomainException("El curso no existe.");
+
+        if ((int)$curso["idUsuario"] === (int)$idUsuario) {
+            throw new DomainException("No podés inscribirte en un curso que creaste.");
+        }
+
+        if ($curso["TipoCurso"] !== "gratuito" || $curso["TipoAcceso"] !== "publico") {
+            throw new DomainException("Este curso no permite inscripción gratuita directa.");
+        }
+
+        $inicio = substr($curso["FechaInicio"], 0, 10);
+        $fin = substr($curso["FechaFin"], 0, 10);
+
+        if ($hoy < $inicio || $hoy > $fin) {
+            throw new DomainException("La inscripción solo está disponible durante el período activo del curso.");
+        }
+
+        // EVITAMOS INSCRIPCIONES DUPLICADAS
+
+        $consulta = mysqli_prepare($conexion, "SELECT Estado FROM inscripcion WHERE idUsuario = ? AND idCurso = ?");
+        mysqli_stmt_bind_param($consulta, "ii", $idUsuario, $idCurso);
+        mysqli_stmt_execute($consulta);
+        $existente = mysqli_fetch_assoc(mysqli_stmt_get_result($consulta));
+        mysqli_stmt_close($consulta);
+
+        if ($existente) {
+            throw new DomainException("Ya registraste una inscripción en este curso.");
+        }
+
+        // CONTROLAMOS EL CUPO DISPONIBLE
+
+        if ($curso["Cupo"] !== null) {
+
+            $consulta = mysqli_prepare($conexion, "SELECT COUNT(*) AS Total FROM inscripcion WHERE idCurso = ? AND Estado = 'confirmada'");
+            mysqli_stmt_bind_param($consulta, "i", $idCurso);
+            mysqli_stmt_execute($consulta);
+            $cantidad = mysqli_fetch_assoc(mysqli_stmt_get_result($consulta));
+            mysqli_stmt_close($consulta);
+
+            if ((int)$cantidad["Total"] >= (int)$curso["Cupo"]) {
+                throw new DomainException("El curso ya alcanzó su cupo máximo.");
+            }
+        }
+
+        // COMPROBAMOS SI EL PLAN PRO CUBRE TODO EL CURSO
+
+        $vencimiento = substr((string)($usuario["FechaVencimiento"] ?? ""), 0, 10);
+        $tienePro = $usuario["PlanTipo"] === "pro" && $vencimiento >= $fin;
+
+        if (!$tienePro) {
+
+            // REVISAMOS LOS PERIODOS DE LAS INSCRIPCIONES CONFIRMADAS
+
+            $sql = "SELECT c.FechaInicio, c.FechaFin
+                    FROM inscripcion AS i
+                    INNER JOIN curso AS c ON c.idCurso = i.idCurso
+                    WHERE i.idUsuario = ? AND i.Estado = 'confirmada'
+                      AND c.FechaFin >= ? AND c.FechaInicio <= ?";
+
+            $consulta = mysqli_prepare($conexion, $sql);
+            mysqli_stmt_bind_param($consulta, "iss", $idUsuario, $hoy, $fin);
+            mysqli_stmt_execute($consulta);
+            $cursosActuales = mysqli_fetch_all(mysqli_stmt_get_result($consulta), MYSQLI_ASSOC);
+            mysqli_stmt_close($consulta);
+
+            $eventos = [];
+
+            // CONTAMOS EL NUEVO CURSO Y LOS PERIODOS QUE SE SUPERPONEN
+
+            $sumarPeriodo = function ($desde, $hasta) use (&$eventos) {
+                $eventos[$desde] = ($eventos[$desde] ?? 0) + 1;
+                $siguiente = (new DateTimeImmutable($hasta))->modify("+1 day")->format("Y-m-d");
+                $eventos[$siguiente] = ($eventos[$siguiente] ?? 0) - 1;
+            };
+
+            $sumarPeriodo($hoy, $fin);
+
+            foreach ($cursosActuales as $actual) {
+
+                $desde = max($hoy, substr($actual["FechaInicio"], 0, 10));
+                $hasta = min($fin, substr($actual["FechaFin"], 0, 10));
+
+                if ($desde <= $hasta) $sumarPeriodo($desde, $hasta);
+            }
+
+            ksort($eventos);
+            $simultaneos = 0;
+
+            foreach ($eventos as $variacion) {
+                $simultaneos += $variacion;
+
+                if ($simultaneos > 3) {
+                    throw new DomainException("Tu plan gratuito permite hasta tres cursos activos simultáneamente.");
+                }
+            }
+        }
+
+        // GUARDAMOS LA INSCRIPCION CONFIRMADA
+
+        $consulta = mysqli_prepare($conexion, "INSERT INTO inscripcion (idUsuario, idCurso, Estado, FechaConfirmacion) VALUES (?, ?, 'confirmada', NOW())");
+        mysqli_stmt_bind_param($consulta, "ii", $idUsuario, $idCurso);
+        mysqli_stmt_execute($consulta);
+        mysqli_stmt_close($consulta);
+
+        mysqli_commit($conexion);
+
+    } catch (Throwable $e) {
+        mysqli_rollback($conexion);
+        throw $e;
+
+    } finally {
+        mysqli_close($conexion);
+    }
+}
+
+
+// REGISTRAMOS LA SOLICITUD DE INSCRIPCION A UN CURSO PAGO
+
+public static function solicitarInscripcionCursoPago($idUsuario, $idCurso) {
+
+    $conexion = self::conectar();
+    $hoy = (new DateTimeImmutable("today", new DateTimeZone("America/Argentina/San_Luis")))->format("Y-m-d");
+
+    mysqli_begin_transaction($conexion);
+
+    try {
+
+        // OBTENEMOS Y BLOQUEAMOS EL CURSO
+
+        $consulta = mysqli_prepare($conexion, "SELECT idUsuario, TipoAcceso, TipoCurso, Cupo, FechaInicio, FechaFin FROM curso WHERE idCurso = ? FOR UPDATE");
+        mysqli_stmt_bind_param($consulta, "i", $idCurso);
+        mysqli_stmt_execute($consulta);
+        $curso = mysqli_fetch_assoc(mysqli_stmt_get_result($consulta));
+        mysqli_stmt_close($consulta);
+
+        if (!$curso) throw new DomainException("El curso no existe.");
+
+        if ((int)$curso["idUsuario"] === (int)$idUsuario) {
+            throw new DomainException("No podés inscribirte en un curso que creaste.");
+        }
+
+        if ($curso["TipoAcceso"] !== "publico" || $curso["TipoCurso"] !== "pago") {
+            throw new DomainException("Este curso no permite esta modalidad de inscripción.");
+        }
+
+        if ($hoy < $curso["FechaInicio"] || $hoy > $curso["FechaFin"]) {
+            throw new DomainException("La inscripción no está disponible fuera del período activo del curso.");
+        }
+
+        // COMPROBAMOS SI YA EXISTE UNA INSCRIPCION
+
+        $consulta = mysqli_prepare($conexion, "SELECT Estado FROM inscripcion WHERE idUsuario = ? AND idCurso = ?");
+        mysqli_stmt_bind_param($consulta, "ii", $idUsuario, $idCurso);
+        mysqli_stmt_execute($consulta);
+        $existente = mysqli_fetch_assoc(mysqli_stmt_get_result($consulta));
+        mysqli_stmt_close($consulta);
+
+        if ($existente) {
+            throw new DomainException("Ya registraste una inscripción en este curso.");
+        }
+
+        // COMPROBAMOS SI QUEDAN CUPOS DISPONIBLES
+
+        if ($curso["Cupo"] !== null) {
+
+            $consulta = mysqli_prepare($conexion, "SELECT COUNT(*) AS Total FROM inscripcion WHERE idCurso = ? AND Estado = 'confirmada'");
+            mysqli_stmt_bind_param($consulta, "i", $idCurso);
+            mysqli_stmt_execute($consulta);
+            $cantidad = mysqli_fetch_assoc(mysqli_stmt_get_result($consulta));
+            mysqli_stmt_close($consulta);
+
+            if ((int)$cantidad["Total"] >= (int)$curso["Cupo"]) {
+                throw new DomainException("El curso ya alcanzó su cupo máximo.");
+            }
+        }
+
+        // GUARDAMOS LA INSCRIPCION COMO PENDIENTE
+
+        $consulta = mysqli_prepare($conexion, "INSERT INTO inscripcion (idUsuario, idCurso, Estado) VALUES (?, ?, 'pendiente')");
+        mysqli_stmt_bind_param($consulta, "ii", $idUsuario, $idCurso);
+        mysqli_stmt_execute($consulta);
+        mysqli_stmt_close($consulta);
+
+        mysqli_commit($conexion);
+
+    } catch (Throwable $e) {
+        mysqli_rollback($conexion);
+        throw $e;
+    } finally {
+        mysqli_close($conexion);
+    }
+}
 }

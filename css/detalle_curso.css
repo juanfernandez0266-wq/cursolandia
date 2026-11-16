@@ -1,0 +1,334 @@
+
+/* PAGINA DETALLE DEL CURSO */
+
+body {
+    margin: 0;
+    background-color: #f4f7fa;
+    color: #0e1320;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.detalle-curso-pagina {
+    min-height: 100vh;
+    padding: 45px 25px 65px;
+}
+
+.detalle-curso-contenido {
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+.detalle-curso-panel {
+    padding: 35px;
+    background-color: #ffffff;
+    border: 1px solid #e0e3e8;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+
+/* ENCABEZADO */
+
+.detalle-curso-encabezado h1 {
+    margin: 0 0 15px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #e0e3e8;
+    font-size: 32px;
+    font-weight: 650;
+    color: #17213c;
+}
+
+.detalle-curso-encabezado p {
+    margin-bottom: 25px;
+    color: #657084;
+}
+
+
+/* GALERIA */
+
+.detalle-curso-portada {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: #eef0f4;
+    border-radius: 12px;
+    color: #858c96;
+}
+
+.detalle-curso-portada img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.detalle-curso-miniaturas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.detalle-miniatura {
+    width: 105px;
+    aspect-ratio: 16 / 9;
+    padding: 0;
+    overflow: hidden;
+    background: #eef0f4;
+    border: 2px solid transparent;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.detalle-miniatura.activa {
+    border-color: #0d6efd;
+}
+
+.detalle-miniatura img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* DATOS DEL CURSO */
+
+.detalle-curso-datos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+    padding: 30px 0;
+    margin-top: 15px;
+    border-bottom: 1px solid #e8ebef;
+}
+
+.detalle-curso-datos > div {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.detalle-curso-datos i {
+    font-size: 25px;
+    color: #0d6efd;
+}
+
+.detalle-curso-datos span {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #657084;
+    font-size: 13px;
+}
+
+.detalle-curso-datos strong {
+    color: #17213c;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+
+/* DESCRIPCION */
+
+.detalle-curso-descripcion {
+    padding: 30px 0;
+}
+
+.detalle-curso-descripcion h2 {
+    margin-bottom: 18px;
+    font-size: 23px;
+    font-weight: 600;
+    color: #17213c;
+}
+
+.detalle-curso-descripcion p {
+    margin: 0;
+    line-height: 1.7;
+    color: #4b5563;
+    overflow-wrap: anywhere;
+}
+
+
+/* INSCRIPCION */
+
+.detalle-curso-inscripcion {
+    padding-top: 25px;
+    border-top: 1px solid #e8ebef;
+}
+
+.detalle-curso-inscripcion p {
+    color: #657084;
+}
+
+.detalle-curso-inscripcion .btn {
+    min-width: 225px;
+    min-height: 50px;
+    padding: 12px 24px;
+    border-radius: 26px;
+}
+
+
+/* VENTANA DE CONFIRMACION */
+
+.detalle-modal {
+    border: none;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.detalle-modal .modal-body {
+    padding: 35px;
+}
+
+.detalle-modal-icono {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 50px;
+    color: #198754;
+}
+
+.detalle-modal h2 {
+    margin-bottom: 15px;
+    font-size: 25px;
+    font-weight: 650;
+}
+
+.detalle-modal p {
+    margin-bottom: 25px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.detalle-modal .btn {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 10px;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .detalle-curso-pagina {
+        padding: 25px 15px;
+    }
+
+    .detalle-curso-panel {
+        padding: 22px;
+    }
+
+    .detalle-curso-encabezado h1 {
+        font-size: 27px;
+    }
+
+    .detalle-curso-datos {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .detalle-curso-inscripcion .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .detalle-curso-datos {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* DISTRIBUIMOS LOS DATOS Y LA INSCRIPCION */
+
+.detalle-curso-resumen {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 270px;
+    gap: 25px;
+    align-items: start;
+
+    padding: 30px 0;
+    border-bottom: 1px solid #e8ebef;
+}
+
+.detalle-curso-resumen .detalle-curso-datos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px 18px;
+
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.detalle-curso-resumen .detalle-curso-inscripcion {
+    padding: 0 0 0 25px;
+    border: none;
+    border-left: 1px solid #e8ebef;
+}
+
+.detalle-curso-resumen .detalle-curso-inscripcion .btn {
+    width: 100%;
+    min-width: 0;
+}
+
+/* ADAPTAMOS LA DISTRIBUCION A PANTALLAS PEQUEÑAS */
+
+@media (max-width: 900px) {
+
+    .detalle-curso-resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .detalle-curso-resumen .detalle-curso-inscripcion {
+        padding: 25px 0 0;
+        border-left: none;
+        border-top: 1px solid #e8ebef;
+    }
+}
+
+.detalle-curso-aviso {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    padding: 15px;
+    border: 1px solid #f0d38b;
+    border-radius: 10px;
+
+    background-color: #fff5db;
+    color: #805415;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.detalle-curso-aviso i {
+    flex-shrink: 0;
+    font-size: 19px;
+}
+
+/* ICONOS PERSONALIZADOS DEL CURSO */
+
+.detalle-curso-icono {
+    display: block;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+
+/* AVISO PARA EL CREADOR DEL CURSO */
+
+.detalle-curso-aviso.aviso-propio {
+    background-color: #eaf3ff;
+    border-color: #b7d3f8;
+    color: #24548b;
+}
+/* ICONO DE INSCRIPCION PENDIENTE */
+
+.detalle-modal-icono.pendiente {
+    color: #d69e36;
+}
